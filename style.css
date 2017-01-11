@@ -1,0 +1,17 @@
+body {
+	text-align: center;
+}
+
+
+#search-container {
+	
+}
+
+.search-result {
+	text-align:left;
+}
+
+.search-result img {
+	margin-right: 10px;
+	float:left;
+}

@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Youtube Soundboard</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<div>
+			<h2>Youtube Soundboard</h2>
+		</div>
+		
+		<div>
+			<h3>Search</h3>
+			<input type="text" value="cats" placeholder="search" id="query" />
+			<button type="button" onclick="search()">Search</button>
+			
+			<div id="search-container"></div>
+			<button type="button" name="name" value="" onclick="">Previous Page</button>
+			<button type="button" name="name" value="" onclick="">Next Page</button>
+		</div>
+		<br />
+		
+		<div>
+			<input type="text" name="videoNameInput" value="" placeholder="Video Name" id="videoNameInput" />
+			<input type="text" name="urlInput" value="" placeholder="youtube url" id="urlInput" />
+			<button type="button" name="urlInputButton" value="Add Video" onclick="addVideoURLAction()">Add Video</button>
+		</div>
+		<br />
+		
+		<div>
+			<div id="player"></div>
+			<br />
+			<button type="button" name="playVideoBtn" value="Play" onclick="playVideo()">Play Video</button>
+			<button type="button" name="pauseVideoBtn" value="Pause" onclick="pauseVideo()">Pause Video</button>
+			<button type="button" name="stopVideoBtn" value="Stop" onclick="stopVideo()">Stop Video</button>
+		</div>
+		
+		<div >
+			<br />
+			
+			<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0">
+				<tr>
+					<th>Video Name</th>
+					<th>Video URL</th>
+					<th>Actions</th>
+				</tr>
+				<tr>
+					<td>Deja Vu</td>
+					<td>https://www.youtube.com/watch?v=dv13gl0a-FA</td>
+					<td><button class="btnCue" value="dv13gl0a-FA">Cue Video</button><button class="btnDelete">Remove</button></td>
+				</tr>
+				<tr>
+					<td>Running in the 90s</td>
+					<td>https://www.youtube.com/watch?v=XCiDuy4mrWU</td>
+					<td><button class="btnCue" value="XCiDuy4mrWU">Cue Video</button><button class="btnDelete">Remove</button></td>
+				</tr>
+				<tr>
+					<td>Totally not porn</td>
+					<td>https://www.youtube.com/watch?v=0jXTBAGv9ZQ</td>
+					<td><button class="btnCue" value="0jXTBAGv9ZQ">Cue Video</button><button class="btnDelete">Remove</button></td>
+				</tr>
+			</table>
+		</div>
+
+		<!-- Scripts -->
+		<script src="jquery-3.1.1.min.js"></script>
+		<script src="secret.js"></script>
+		<script src="app.js"></script>
+		<script src="https://apis.google.com/js/client.js?onload=handleAPILoaded"></script>
+	</body>
+</html>
+
