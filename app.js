@@ -1,5 +1,8 @@
 var player;
 
+var nextSearchPageToken = "";
+var previousSearchPageToken = "";
+
 $(document).ready(function() {
 	initialisePlayer();
 
@@ -14,26 +17,63 @@ $(document).ready(function() {
 	
 });
 
-function search() {
+function search(pageToken) {
+	if (typeof pageToken == 'undefined') {
+		pageToken = "";
+		console.log("no page token given");
+	}
+	
 	var q = $("#query").val();
 	var request = gapi.client.youtube.search.list({
 		q: q,
 		part: 'snippet',
 		type: 'video',
-		pageToken: ''
+		pageToken: pageToken //Forgot to add this variable.
 	});
 	
+	console.log("page token before request:" + pageToken);
+	
 	request.execute(function(response) {
+		$("#search-container").empty();
+	
 		var results = response.result;
 		console.log(results);
-		$.each(results.items, function(index, item) {
+		nextSearchPageToken = (typeof results.nextPageToken != 'undefined') ? results.nextPageToken : "blah2";
+		previousSearchPageToken = (typeof results.prevPageToken != 'undefined') ? results.prevPageToken : "";
 		
+		if (nextSearchPageToken == "") {
+			$("#nextSearchPageBtn").prop("disabled", true);
+		} else {
+			$("#nextSearchPageBtn").prop("disabled", false);
+		}
+		
+		if (previousSearchPageToken == "") {
+			$("#previosSearchPageBtn").prop("disabled", true);
+		} else {
+			$("#previosSearchPageBtn").prop("disabled", false);
+		}
+		
+		console.log("next page token after request: " + nextSearchPageToken);
+		console.log("previous page token before request: " + previousSearchPageToken);
+		
+		
+		$.each(results.items, function(index, item) {
+			
 			var searchResultItem = "<div class=\"search-result\"><img src=\"" + item.snippet.thumbnails.default.url + "\" alt=\"Video Thumbnail\" width=\"" + item.snippet.thumbnails.default.width + "\" height=\"" + item.snippet.thumbnails.default.height +"\" />" + "<div><h4>" + item.snippet.title + "</h4><span><a href=\"https://www.youtube.com/channel/" + item.snippet.channelId +"\" target=\"_blank\">" + item.snippet.channelTitle + "</a></span><br /><button type=\"button\" value=\"" + item.id.videoId +"\" onclick=\"previewVideoAction('" + item.id.videoId + "')\">Preview Video</button><button type=\"button\" name=\"addVideo\" value=\"Add\" onclick=\"addVideoSearchAction('" + item.id.videoId + "')\">Add Video</button><a href=\"https://www.youtube.com/watch?v=" + item.id.videoId + "\" target=\"_blank\">View on Youtube</a></div></div>";
 			
 			$("#search-container").append(searchResultItem);
 		});
-		//$().html("<pre>" + str.items + "</pre>");
 	})
+}
+
+function nextPageSearch() {
+console.log("Next page search function executed");
+	search(nextSearchPageToken);
+}
+
+function previousPageSearch() {
+console.log("Previous page search function executed");
+	search(previousSearchPageToken);
 }
 
 function handleAPILoaded() {
