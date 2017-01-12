@@ -1,17 +1,21 @@
 body {
-	text-align: center;
-}
-
-
-#search-container {
-	
 }
 
 .search-result {
-	text-align:left;
+	margin-top:10px;
 }
 
-.search-result img {
-	margin-right: 10px;
-	float:left;
+.videoWrapper {
+	position: relative;
+	padding-bottom: 56.25%;
+	padding-top: 25px;
+	height: 0;
+}
+
+.videoWrapper iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }

@@ -60,7 +60,7 @@ function search(pageToken) {
 		
 		$.each(results.items, function(index, item) {
 			
-			var searchResultItem = "<div class=\"search-result\"><img src=\"" + item.snippet.thumbnails.default.url + "\" alt=\"Video Thumbnail\" width=\"" + item.snippet.thumbnails.default.width + "\" height=\"" + item.snippet.thumbnails.default.height +"\" />" + "<div><h4>" + item.snippet.title + "</h4><span><a href=\"https://www.youtube.com/channel/" + item.snippet.channelId +"\" target=\"_blank\">" + item.snippet.channelTitle + "</a></span><br /><button type=\"button\" value=\"" + item.id.videoId +"\" onclick=\"previewVideoAction('" + item.id.videoId + "')\">Preview Video</button><button type=\"button\" name=\"addVideo\" value=\"Add\" onclick=\"addVideoSearchAction('" + item.snippet.title + "', '" + item.id.videoId + "')\">Add Video</button><a href=\"https://www.youtube.com/watch?v=" + item.id.videoId + "\" target=\"_blank\">View on Youtube</a></div></div>";
+			var searchResultItem = "<div class=\"media\"><div class=\"media-left media-middle\"><img src=\"" + item.snippet.thumbnails.default.url + "\" class=\"media-object\" alt=\"Video Thumbnail\" width=\"" + item.snippet.thumbnails.default.width + "\" height=\"" + item.snippet.thumbnails.default.height +"\" /></div>" + "<div class=\"media-body\"><h4 class=\"media-heading\">" + item.snippet.title + "</h4><span><a href=\"https://www.youtube.com/channel/" + item.snippet.channelId +"\" target=\"_blank\">" + item.snippet.channelTitle + "</a></span><br /><button class=\"btn btn-default\" type=\"button\" value=\"" + item.id.videoId +"\" onclick=\"previewVideoAction('" + item.id.videoId + "')\">Preview Video</button><button  class=\"btn btn-default\" type=\"button\" name=\"addVideo\" value=\"Add\" onclick=\"addVideoSearchAction('" + item.snippet.title + "', '" + item.id.videoId + "')\">Add Video</button><a href=\"https://www.youtube.com/watch?v=" + item.id.videoId + "\" target=\"_blank\">View on Youtube</a></div></div>";
 			
 			$("#search-container").append(searchResultItem);
 		});
@@ -102,7 +102,7 @@ function addToTable(name, url) {
 	var videoURL = url;
 	var videoID = videoURL.match(/v=([^&]+)/)[1];
 
-	var actions = "<button class=\"btnCue\" value=\"" + videoID + "\">Cue Video</button><button class=\"btnDelete\" >Remove</button>";
+	var actions = "<button class=\"btnCue btn btn-default\" value=\"" + videoID + "\">Cue Video</button><button class=\"btnDelete btn btn-default\" >Remove</button>";
 
 	var row = '<tr id="'+ videoID + '"><td>' + videoName + '</td><td><a href=\"' + url + '\" target="_blank">View on Youtube</a></td><td>' + actions + '</td></tr>';
 	$("#saveListTable").append(row);
@@ -158,8 +158,8 @@ function onYouTubeIframeAPIReady() {
     width: '640',
     videoId: 'dv13gl0a-FA',
     events: {
-      'onReady': onPlayerReady,
-      'onStateChange': onPlayerStateChange
+      'onReady': onPlayerReady/*,
+      'onStateChange': onPlayerStateChange*/
     }
   });
 }

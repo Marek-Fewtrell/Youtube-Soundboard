@@ -4,69 +4,91 @@
 		<meta charset="utf-8">
 		<title>Youtube Soundboard</title>
 		<link rel="stylesheet" href="style.css">
+		<link rel="stylesheet" href="bootstrap.min.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 	</head>
 	<body>
-		<div>
-			<h2>Youtube Soundboard</h2>
-		</div>
-		
-		<div>
-			<h3>Search</h3>
-			<input type="text" placeholder="search" id="query" />
-			<button type="button" onclick="search()">Search</button>
+		<div class="container-fluid text-center">
+			<div>
+				<h2>Youtube Soundboard</h2>
+			</div>
 			
-			<div id="search-container"></div>
-			<button id="previosSearchPageBtn" type="button" name="name" value="" onclick="previousPageSearch()">Previous Page</button>
-			<button id="nextSearchPageBtn" type="button" name="name" value="" onclick="nextPageSearch()">Next Page</button>
-		</div>
-		<br />
-		
-		<div>
-			<input type="text" name="videoNameInput" value="" placeholder="Video Name" id="videoNameInput" />
-			<input type="text" name="urlInput" value="" placeholder="youtube url" id="urlInput" />
-			<button type="button" name="urlInputButton" value="Add Video" onclick="addVideoURLAction()">Add Video</button>
-		</div>
-		<br />
-		
-		<div>
-			<div id="player"></div>
-			<br />
-			<button type="button" name="playVideoBtn" value="Play" onclick="playVideo()">Play Video</button>
-			<button type="button" name="pauseVideoBtn" value="Pause" onclick="pauseVideo()">Pause Video</button>
-			<button type="button" name="stopVideoBtn" value="Stop" onclick="stopVideo()">Stop Video</button>
-		</div>
-		
-		<div >
-			<br />
+			<div class="row">
+				<div class="col-md-6">
+					<div class="well well-sm">
+						<div class="videoWrapper">
+							<div id="player"></div>
+						</div>
+						<br />
+						<button class="btn btn-default" type="button" name="playVideoBtn" value="Play" onclick="playVideo()">Play Video</button>
+						<button class="btn btn-default" type="button" name="pauseVideoBtn" value="Pause" onclick="pauseVideo()">Pause Video</button>
+						<button class="btn btn-default" type="button" name="stopVideoBtn" value="Stop" onclick="stopVideo()">Stop Video</button>
+					</div>
+				
+					<div class="well well-sm">
+						<div>
+							<h3>Add Video</h3>
+							<input class="form-control" type="text" name="videoNameInput" value="" placeholder="Video Name" id="videoNameInput" />
+							<input class="form-control" type="text" name="urlInput" value="" placeholder="youtube url" id="urlInput" />
+							<button class="btn btn-default" type="button" name="urlInputButton" value="Add Video" onclick="addVideoURLAction()">Add Video</button>
+						</div>
 			
-			<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0">
-				<tr>
-					<th>Video Name</th>
-					<th>Video URL</th>
-					<th>Actions</th>
-				</tr>
-				<tr>
-					<td>Deja Vu</td>
-					<td><a href="https://www.youtube.com/watch?v=dv13gl0a-FA" target="_blank">View on Youtube</a></td>
-					<td><button class="btnCue" value="dv13gl0a-FA">Cue Video</button><button class="btnDelete">Remove</button></td>
-				</tr>
-				<tr>
-					<td>Running in the 90s</td>
-					<td><a href="https://www.youtube.com/watch?v=XCiDuy4mrWU" target="_blank">View on Youtube</a></td>
-					<td><button class="btnCue" value="XCiDuy4mrWU">Cue Video</button><button class="btnDelete">Remove</button></td>
-				</tr>
-				<tr>
-					<td>Halo Theme</td>
-					<td><a href="https://www.youtube.com/watch?v=0jXTBAGv9ZQ" target="_blank">View on Youtube</a></td>
-					<td><button class="btnCue" value="0jXTBAGv9ZQ">Cue Video</button><button class="btnDelete">Remove</button></td>
-				</tr>
-			</table>
-		</div>
+						<div>
+							<h3>Search</h3>
+							<div class="input-group">
+								<input type="text" class="form-control" placeholder="search" id="query" />
+								<div class="input-group-btn">
+									<button type="button" class="btn btn-default" onclick="search()">
+										Search
+									</button>
+								</div>
+							</div>
+							<br />
+							
+							<div id="search-container" class="text-left"></div><br />
+							
+							<button class="btn btn-default" id="previosSearchPageBtn" type="button" name="name" value="" onclick="previousPageSearch()">Previous Page</button>
+							<button class="btn btn-default" id="nextSearchPageBtn" type="button" name="name" value="" onclick="nextPageSearch()">Next Page</button>
+						</div>
+					</div>
+				</div>
+			
+				<div class="col-md-6">
+					<div class="well well-sm">
+						<h3>Saved Videos</h3>
+						<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="text-center">
+							<tr>
+								<th>Video Name</th>
+								<th>Video URL</th>
+								<th>Actions</th>
+							</tr>
+							<tr>
+								<td>Deja Vu</td>
+								<td><a href="https://www.youtube.com/watch?v=dv13gl0a-FA" target="_blank">View on Youtube</a></td>
+								<td><button class="btnCue btn btn-default" value="dv13gl0a-FA">Cue Video</button><button class="btnDelete btn btn-default">Remove</button></td>
+							</tr>
+							<tr>
+								<td>Running in the 90s</td>
+								<td><a href="https://www.youtube.com/watch?v=XCiDuy4mrWU" target="_blank">View on Youtube</a></td>
+								<td><button class="btnCue btn btn-default" value="XCiDuy4mrWU">Cue Video</button><button class="btnDelete btn btn-default">Remove</button></td>
+							</tr>
+							<tr>
+								<td>Halo Theme</td>
+								<td><a href="https://www.youtube.com/watch?v=0jXTBAGv9ZQ" target="_blank">View on Youtube</a></td>
+								<td><button class="btnCue btn btn-default" value="0jXTBAGv9ZQ">Cue Video</button><button class="btnDelete btn btn-default">Remove</button></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
 
+			<br />
+		</div>
 		<!-- Scripts -->
 		<script src="jquery-3.1.1.min.js"></script>
 		<script src="secret.js"></script>
 		<script src="app.js"></script>
+		<script src="bootstrap.min.js"></script>
 		<script src="https://apis.google.com/js/client.js?onload=handleAPILoaded"></script>
 	</body>
 </html>
