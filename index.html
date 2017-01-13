@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<title>Youtube Soundboard</title>
 		<link rel="stylesheet" href="style.css">
-		<link rel="stylesheet" href="bootstrap.min.css">
+		<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 	</head>
 	<body>
@@ -20,9 +20,11 @@
 							<div id="player"></div>
 						</div>
 						<br />
-						<button class="btn btn-default" type="button" name="playVideoBtn" value="Play" onclick="playVideo()">Play Video</button>
-						<button class="btn btn-default" type="button" name="pauseVideoBtn" value="Pause" onclick="pauseVideo()">Pause Video</button>
-						<button class="btn btn-default" type="button" name="stopVideoBtn" value="Stop" onclick="stopVideo()">Stop Video</button>
+						<div class="btn-group">
+							<button class="btn btn-default" type="button" name="playVideoBtn" value="Play" onclick="playVideo()">Play Video</button>
+							<button class="btn btn-default" type="button" name="pauseVideoBtn" value="Pause" onclick="pauseVideo()">Pause Video</button>
+							<button class="btn btn-default" type="button" name="stopVideoBtn" value="Stop" onclick="stopVideo()">Stop Video</button>
+						</div>
 					</div>
 				
 					<div class="well well-sm">
@@ -38,8 +40,8 @@
 							<div class="input-group">
 								<input type="text" class="form-control" placeholder="search" id="query" />
 								<div class="input-group-btn">
-									<button type="button" class="btn btn-default" onclick="search()">
-										Search
+									<button id="btnQuery" type="button" class="btn btn-default btn-primary" onclick="search()">
+										<span class="glyphicon glyphicon-search"></span>
 									</button>
 								</div>
 							</div>
@@ -56,28 +58,30 @@
 				<div class="col-md-6">
 					<div class="well well-sm">
 						<h3>Saved Videos</h3>
-						<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="text-center">
-							<tr>
-								<th>Video Name</th>
-								<th>Video URL</th>
-								<th>Actions</th>
-							</tr>
-							<tr>
-								<td>Deja Vu</td>
-								<td><a href="https://www.youtube.com/watch?v=dv13gl0a-FA" target="_blank">View on Youtube</a></td>
-								<td><button class="btnCue btn btn-default" value="dv13gl0a-FA">Cue Video</button><button class="btnDelete btn btn-default">Remove</button></td>
-							</tr>
-							<tr>
-								<td>Running in the 90s</td>
-								<td><a href="https://www.youtube.com/watch?v=XCiDuy4mrWU" target="_blank">View on Youtube</a></td>
-								<td><button class="btnCue btn btn-default" value="XCiDuy4mrWU">Cue Video</button><button class="btnDelete btn btn-default">Remove</button></td>
-							</tr>
-							<tr>
-								<td>Halo Theme</td>
-								<td><a href="https://www.youtube.com/watch?v=0jXTBAGv9ZQ" target="_blank">View on Youtube</a></td>
-								<td><button class="btnCue btn btn-default" value="0jXTBAGv9ZQ">Cue Video</button><button class="btnDelete btn btn-default">Remove</button></td>
-							</tr>
-						</table>
+						<div class="table-responsive">
+							<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="text-center table table-striped table-bordered table-condensed">
+								<tr>
+									<th>Video Name</th>
+									<th>Video URL</th>
+									<th>Actions</th>
+								</tr>
+								<tr>
+									<td>Deja Vu</td>
+									<td><a href="https://www.youtube.com/watch?v=dv13gl0a-FA" target="_blank" class="btn btn-default">View on Youtube</a></td>
+									<td><button class="btnCue btn btn-default" value="dv13gl0a-FA">Cue Video</button><button class="btnDelete btn btn-default btn-danger">Remove</button></td>
+								</tr>
+								<tr>
+									<td>Running in the 90s</td>
+									<td><a href="https://www.youtube.com/watch?v=XCiDuy4mrWU" target="_blank" class="btn btn-default">View on Youtube</a></td>
+									<td><button class="btnCue btn btn-default" value="XCiDuy4mrWU">Cue Video</button><button class="btnDelete btn btn-default btn-danger">Remove</button></td>
+								</tr>
+								<tr>
+									<td>Halo Theme</td>
+									<td><a href="https://www.youtube.com/watch?v=0jXTBAGv9ZQ" target="_blank" class="btn btn-default">View on Youtube</a></td>
+									<td><button class="btnCue btn btn-default" value="0jXTBAGv9ZQ">Cue Video</button><button class="btnDelete btn btn-default btn-danger">Remove</button></td>
+								</tr>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -88,7 +92,7 @@
 		<script src="jquery-3.1.1.min.js"></script>
 		<script src="secret.js"></script>
 		<script src="app.js"></script>
-		<script src="bootstrap.min.js"></script>
+		<script src="bootstrap/js/bootstrap.min.js"></script>
 		<script src="https://apis.google.com/js/client.js?onload=handleAPILoaded"></script>
 	</body>
 </html>
