@@ -13,6 +13,17 @@
 				<h2>Youtube Soundboard</h2>
 			</div>
 			
+			<div id="authorize-div" style="display: none">
+		    <span>Authorize access to Google Sheets API</span>
+		    <!--Button for the user to click to initiate auth sequence -->
+		    <button id="authorize-button" onclick="handleAuthClick(event)">
+		      Authorize
+		    </button>
+		  </div>
+			
+			<span id="statusMessages"></span>
+			<span class="visualFeedback"></span>
+			
 			<div class="row">
 				<div class="col-md-6">
 					<div class="well well-sm">
@@ -28,13 +39,6 @@
 					</div>
 				
 					<div class="well well-sm">
-						<div>
-							<h3>Add Video</h3>
-							<input class="form-control" type="text" name="videoNameInput" value="" placeholder="Video Name" id="videoNameInput" />
-							<input class="form-control" type="text" name="urlInput" value="" placeholder="youtube url" id="urlInput" />
-							<button class="btn btn-default" type="button" name="urlInputButton" value="Add Video" onclick="addVideoURLAction()">Add Video</button>
-						</div>
-			
 						<div>
 							<h3>Search</h3>
 							<div class="input-group">
@@ -58,27 +62,15 @@
 				<div class="col-md-6">
 					<div class="well well-sm">
 						<h3>Saved Videos</h3>
+						<button type="button" id="refreshSavedVideosBtn" value="" onclick="refreshSavedVideoTable()" class="btn btn-default glyphicon glyphicon-refresh disabled" ></button>
+						<button type="button" name="newSavedVideoBtn" value="" onclick="" data-toggle="modal" data-target="#myModal" class="btn btn-default">New Video</button>
+						
 						<div class="table-responsive">
 							<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="text-center table table-striped table-bordered table-condensed">
 								<tr>
 									<th>Video Name</th>
 									<th>Video URL</th>
 									<th>Actions</th>
-								</tr>
-								<tr>
-									<td>Deja Vu</td>
-									<td><a href="https://www.youtube.com/watch?v=dv13gl0a-FA" target="_blank" class="btn btn-default">View on Youtube</a></td>
-									<td><button class="btnCue btn btn-default" value="dv13gl0a-FA">Cue Video</button><button class="btnDelete btn btn-default btn-danger">Remove</button></td>
-								</tr>
-								<tr>
-									<td>Running in the 90s</td>
-									<td><a href="https://www.youtube.com/watch?v=XCiDuy4mrWU" target="_blank" class="btn btn-default">View on Youtube</a></td>
-									<td><button class="btnCue btn btn-default" value="XCiDuy4mrWU">Cue Video</button><button class="btnDelete btn btn-default btn-danger">Remove</button></td>
-								</tr>
-								<tr>
-									<td>Halo Theme</td>
-									<td><a href="https://www.youtube.com/watch?v=0jXTBAGv9ZQ" target="_blank" class="btn btn-default">View on Youtube</a></td>
-									<td><button class="btnCue btn btn-default" value="0jXTBAGv9ZQ">Cue Video</button><button class="btnDelete btn btn-default btn-danger">Remove</button></td>
 								</tr>
 							</table>
 						</div>
@@ -87,13 +79,42 @@
 			</div>
 
 			<br />
+			
+			<div id="myModal" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+					
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title">Create/Edit Saved Video</h4>
+						</div>
+						<div class="modal-body">
+							<input type="hidden" id="videoRowNumberHolder" />
+							<input class="form-control" type="text" name="videoNameInput" value="" placeholder="Video Name" id="videoNameInput" />
+							<input class="form-control" type="text" name="urlInput" value="" placeholder="Youtube URL" id="urlInput" />
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="button" class="btn btn-success" onclick="" disabled>Apply</button>
+							<button class="btn btn-default" type="button" name="urlInputButton" value="Add Video" onclick="addVideoURLAction()">Add Video</button>
+							<button class="btn btn-default" type="button" name="urlInputButton" value="Update Video" onclick="updateVideoAction()">Update Video</button>
+						</div>
+					</div>
+					
+				</div>
+				
+			</div>
+			
 		</div>
 		<!-- Scripts -->
 		<script src="jquery-3.1.1.min.js"></script>
 		<script src="secret.js"></script>
+		<script src="auth.js"></script>
+		<script src="search.js"></script>
 		<script src="app.js"></script>
+		<script src="sheetapp.js"></script>
 		<script src="bootstrap/js/bootstrap.min.js"></script>
-		<script src="https://apis.google.com/js/client.js?onload=handleAPILoaded"></script>
+		<script src="https://apis.google.com/js/client.js?onload=handleInit"></script>
 	</body>
 </html>
 

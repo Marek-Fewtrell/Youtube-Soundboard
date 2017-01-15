@@ -8,14 +8,32 @@ $(document).ready(function() {
 	initialisePlayer();
 
 	$("#saveListTable").on("click", ".btnDelete", function () {
-		$(this).closest("tr").remove();
+		var confirmBoxResult = confirm("Are you sure you want to delete that?");
+		if (confirmBoxResult == true) {
+			deleteRow($(this).val());
+			//$(this).closest("tr").remove(); //Alternative to redoing the table.
+		}
 	});
 	
 	$("#saveListTable").on("click", ".btnCue", function () {
-		//console.log($(this).val());
 		cueVideoAction($(this).val());
 	});
 	
+	$("#saveListTable").on("click", ".btnEdit", function() {
+		console.log("Edit btn click event thisval:" + $(this).val());
+		var index = getSingleVideoIndex($(this).val());
+		var videoItem = savedVideosCollection[index];
+		console.log("Edit btn click event index:" + index);
+		populateModal(videoItem.name, videoItem.url);
+		$("#videoRowNumberHolder").val(videoItem.rowNumber);
+	});
+	
+	$("#search-container").on("click", ".btnAddSearch", function () {
+		//Maybe use this to replace the onclick event on the buttons for each search item.
+		alert("heelo");
+	});
+	
+	//Enables the Enter Key to be used in the search bar to trigger the search functionality.
 	$("#query").keypress(function (e) {
 		if (e.which == 13) {
 			$("#btnQuery").click();
@@ -25,102 +43,142 @@ $(document).ready(function() {
 	
 });
 
-function search(pageToken) {
-	if (typeof pageToken == 'undefined') {
-		pageToken = "";
-		console.log("no page token given");
-	}
-	
-	var q = $("#query").val();
-	var request = gapi.client.youtube.search.list({
-		q: q,
-		part: 'snippet',
-		type: 'video',
-		pageToken: pageToken //Forgot to add this variable.
-	});
-	
-	console.log("page token before request:" + pageToken);
-	
-	request.execute(function(response) {
-		$("#search-container").empty();
-	
-		var results = response.result;
-		console.log(results);
-		nextSearchPageToken = (typeof results.nextPageToken != 'undefined') ? results.nextPageToken : "blah2";
-		previousSearchPageToken = (typeof results.prevPageToken != 'undefined') ? results.prevPageToken : "";
-		
-		if (nextSearchPageToken == "") {
-			$("#nextSearchPageBtn").prop("disabled", true);
-		} else {
-			$("#nextSearchPageBtn").prop("disabled", false);
-		}
-		
-		if (previousSearchPageToken == "") {
-			$("#previosSearchPageBtn").prop("disabled", true);
-		} else {
-			$("#previosSearchPageBtn").prop("disabled", false);
-		}
-		
-		console.log("next page token after request: " + nextSearchPageToken);
-		console.log("previous page token before request: " + previousSearchPageToken);
-		
-		
-		$.each(results.items, function(index, item) {
-			
-			var searchResultItem = "<div class=\"media\"><div class=\"media-left media-middle\"><img src=\"" + item.snippet.thumbnails.default.url + "\" class=\"media-object\" alt=\"Video Thumbnail\" width=\"" + item.snippet.thumbnails.default.width + "\" height=\"" + item.snippet.thumbnails.default.height +"\" /></div>" + "<div class=\"media-body\"><h4 class=\"media-heading\">" + item.snippet.title + "</h4><span><a href=\"https://www.youtube.com/channel/" + item.snippet.channelId +"\" target=\"_blank\">" + item.snippet.channelTitle + "</a></span><br /><div class=\"btn-group\"><button class=\"btn btn-default btn-info\" type=\"button\" value=\"" + item.id.videoId +"\" onclick=\"previewVideoAction('" + item.id.videoId + "')\">Preview Video</button><button  class=\"btn btn-default btn-success\" type=\"button\" name=\"addVideo\" value=\"Add\" onclick=\"addVideoSearchAction('" + item.snippet.title + "', '" + item.id.videoId + "')\">Add Video</button><a href=\"https://www.youtube.com/watch?v=" + item.id.videoId + "\" target=\"_blank\" class=\"btn btn-default\">View on Youtube</a></div></div></div>";
-			
-			$("#search-container").append(searchResultItem);
-		});
-	})
-}
-
 function nextPageSearch() {
-console.log("Next page search function executed");
+	console.log("Next page search function executed");
 	search(nextSearchPageToken);
 }
 
 function previousPageSearch() {
-console.log("Previous page search function executed");
+	console.log("Previous page search function executed");
 	search(previousSearchPageToken);
-}
-
-function handleAPILoaded() {
-	//enable buttons to be used or something.
-	gapi.client.setApiKey(apiKey);
-	gapi.client.load('youtube', 'v3', function() {
-		//api is ready
-	});
 }
   
 function addVideoURLAction() {
 	var url = $("#urlInput").val();
 	var name = $("#videoNameInput").val();
 
-	addToTable(name, url);
+	createRow();
+	//closeModal(); //Maybe use this to separate the functionality.
+}
+
+function updateVideoAction() {
+	var newUrl = $("#urlInput").val();
+	var newName = $("#videoNameInput").val();
+	var rownumber = $("#videoRowNumberHolder").val();
+	updateRow(rownumber, newName, newUrl);
 }
 
 function addVideoSearchAction(name, videoId) {
 	var url = "https://www.youtube.com/watch?v=" + videoId;
-	addToTable(name, url);
+	populateModal(name, url);
 }
 
-function addToTable(name, url) {
+function addToTable(name, url, rownumber) {
+	//Use some sort of validation.
+	/*if (rownumber === undefined) {
+		//rownumber = 0;
+		return;
+	}*/
+	console.log("AddToTable function rownumber:" + rownumber);
 	var videoName = name;
 	var videoURL = url;
 	var videoID = videoURL.match(/v=([^&]+)/)[1];
 
-	var actions = "<button class=\"btnCue btn btn-default\" value=\"" + videoID + "\">Cue Video</button><button class=\"btnDelete btn btn-default btn-danger\" >Remove</button>";
+	var actions = "<div class=\"btn-group\"><button class=\"btn btn-default btnEdit\" value=\"" + rownumber + "\">Edit</button><button class=\"btnCue btn btn-default\" value=\"" + videoID + "\">Cue Video</button><button value=\"" + rownumber + "\" class=\"btnDelete btn btn-default btn-danger\" >Remove</button></div>";
 
-	var row = '<tr id="'+ videoID + '"><td>' + videoName + '</td><td><a href=\"' + url + '\" target="_blank">View on Youtube</a></td><td>' + actions + '</td></tr>';
+	var row = '<tr><td>' + videoName + '</td><td><a href=\"' + url + '\" target="_blank" class="btn btn-default">View on Youtube</a></td><td>' + actions + '</td></tr>';
 	$("#saveListTable").append(row);
 }
+
+function populateTable() {
+	$("#saveListTable tr:gt(0)").remove();
+	$.each(savedVideosCollection, function(index, item) {
+		addToTable(item["name"], item["url"], item["rowNumber"]);
+	});
+}
+
+function openModal() {
+	$("#myModal").modal("show");
+}
+function closeModal() {
+	$("#myModal").modal("hide");
+}
+
+function populateModal(name, url) {
+	$("#videoNameInput").val(name);
+	$("#urlInput").val(url);
+	openModal();
+}
+
 
 function getVideoDetails(url) {
 
 }
 
-function validateUrl() {
+function refreshSavedVideoTable() {
+	$("#saveListTable tr:gt(0)").remove();
+	getSheet();
+}
 
+function validateUrl(url) {
+	var pattern = /https:\/\/www.youtube.com\/watch\?v\=([^&]+)/;
+	if (pattern.test(url)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function addSingleVideo(name, url, rownumber) {
+	var newVideoItem = {"name": name, "url" : url, "rowNumber": rownumber};
+	var previousLength = savedVideosCollection.length;
+	var newLength = savedVideosCollection.push(newVideoItem);
+	if (newLength > previousLength) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function getSingleVideoIndex(rownumber) {
+	/*$.each(savedVideosCollection, function(index, item) {
+		if (item.rowNumber == rownumber) {
+			
+		}
+	});*/
+	var videoIndex = -1;
+	for ( var i = 0; i < savedVideosCollection.length; i++) {
+		if (savedVideosCollection[i].rowNumber == rownumber) {
+			//videoObject = savedVideosCollection[i];
+			videoIndex = i;
+			break;
+		}
+	}
+	return videoIndex;
+}
+
+function updateSingleVideo(rownumber, name, url) {
+	//var videoObject = savedVideosCollection[index];
+	var index = getSingleVideoIndex(rownumber);
+	if (index == -1) {
+		return false;
+	}
+	var videoObject = savedVideosCollection[index];
+	videoObject.name = name;
+	videoObject.url = url;
+	return true;
+}
+
+function removeSingleVideo(rownumber) {
+console.log("removeSingleVideo function entry");
+//Should just retrieve the new sheet.
+	var index = getSingleVideoIndex(rownumber);
+	console.log("removeSingleVideo rownumber:" + rownumber + " index:" + index);
+	if (index == -1) {
+		return false;
+	}
+	// splice()
+	savedVideosCollection.splice(index, 1);
 }
 
 function previewVideoAction(videoId) {
