@@ -13,6 +13,8 @@ function handleSearchAPILoaded() {
 	//gapi.client.load(discoveryUrl).then(checkAuth);
 }
 
+var searchCollection = [];
+
 function search(pageToken) {
 	if (pageToken === undefined) {
 		pageToken = "";
@@ -28,6 +30,7 @@ function search(pageToken) {
 	
 	request.execute(function(response) {
 		$("#search-container").empty();
+		searchCollection = [];
 		
 		var results = response.result;
 		nextSearchPageToken = (results.nextPageToken !== undefined) ? results.nextPageToken : "blah2";
@@ -47,9 +50,41 @@ function search(pageToken) {
 		
 		$.each(results.items, function(index, item) {
 			
-			var searchResultItem = "<div class=\"media\"><div class=\"media-left media-middle\"><img src=\"" + item.snippet.thumbnails.default.url + "\" class=\"media-object\" alt=\"Video Thumbnail\" width=\"" + item.snippet.thumbnails.default.width + "\" height=\"" + item.snippet.thumbnails.default.height +"\" /></div>" + "<div class=\"media-body\"><h4 class=\"media-heading\">" + item.snippet.title + "</h4><span><a href=\"https://www.youtube.com/channel/" + item.snippet.channelId +"\" target=\"_blank\">" + item.snippet.channelTitle + "</a></span><br /><div class=\"btn-group\"><button class=\"btn btn-default btn-info\" type=\"button\" value=\"" + item.id.videoId +"\" onclick=\"previewVideoAction('" + item.id.videoId + "')\">Preview Video</button><button  class=\"btn btn-default btn-success btnAddSearch\" type=\"button\" name=\"addVideo\" value=\"Add\" onclick=\"addVideoSearchAction('" + item.snippet.title + "', '" + item.id.videoId + "')\">Add Video</button><a href=\"https://www.youtube.com/watch?v=" + item.id.videoId + "\" target=\"_blank\" class=\"btn btn-default\">View on Youtube</a></div></div></div>";
+			var searchItem = {
+				"id" : index,
+				"videoId" : item.id.videoId,
+				"videoTitle" : item.snippet.title,
+				"channelId" : item.snippet.channelId,
+				"channelTitle" : item.snippet.channelTitle,
+				"thumbnail" : {
+					"thumbnailUrl" : item.snippet.thumbnails.default.url,
+					"thumbnailHeight" : item.snippet.thumbnails.default.height,
+					"thumbnailWidth" : item.snippet.thumbnails.default.width
+				}
+			};
 			
-			$("#search-container").append(searchResultItem);
+			searchCollection.push(searchItem);
+			
+			var $img = $("<img/>").addClass("media-object").attr("src", item.snippet.thumbnails.default.url).attr("alt", "Video Thumbnail").attr("width", item.snippet.thumbnails.default.width).attr("height", item.snippet.thumbnails.default.height);
+			var $imgContainer = $("<div/>").addClass("media-left media-middle").append($img);
+			
+			
+			var $titleHeader = $("<h4>").addClass("media-heading").text(item.snippet.title);
+			var $span = $("<span>").append($("<a>").attr("href", "https://www.youtube.com/channel/" + item.snippet.channelId).attr("target", "_blank").text(item.snippet.channelTitle))
+			
+			var $previewBtn = $("<button/>").addClass("btn btn-default btn-info previewVidBtn").attr("value", item.id.videoId).text("Preview Video");
+			var $addVideoBtn = $("<button/>").addClass("btn btn-default btn-success btnAddSearch").attr("value", index).text("Add Video");
+			var $viewLink = $("<a>").addClass("btn btn-default").attr("target", "_blank").attr("href", "https://www.youtube.com/watch?v=" + item.id.videoId).text("View on Youtube");
+	
+			var $divContainer = $("<div/>").addClass("btn-group").append($previewBtn, $addVideoBtn, $viewLink);
+			
+			
+			var $body = $("<div>").addClass("media-body").append($titleHeader, $span, $("<br>"), $divContainer);
+			
+			var $mainContainer = $("<div/>").addClass("media").append($imgContainer, $body);
+			
+			$("#search-container").append($mainContainer);
+			
 		});
 	}, function (response) {
 		console.log("Search error");

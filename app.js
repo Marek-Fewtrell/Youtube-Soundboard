@@ -22,13 +22,33 @@ $(document).ready(function() {
 	$("#saveListTable").on("click", ".btnEdit", function() {
 		var index = getSingleVideoIndex($(this).val());
 		var videoItem = savedVideosCollection[index];
+		changeModalAction("edit");
 		populateModal(videoItem.name, videoItem.url);
 		$("#videoRowNumberHolder").val(videoItem.rowNumber);
 	});
 	
+	$("#newSavedVideoBtn").on("click", function() {
+		changeModalAction("create");
+		clearModal();
+	});
+	
+	$("#modalApplyBtn").on("click", function () {
+		var action = $("#modalAction").val();
+		if (action == "create") {
+			addVideoURLAction();
+		} else if (action == "edit") {
+			updateVideoAction();
+		}
+	});
+	
 	$("#search-container").on("click", ".btnAddSearch", function () {
 		//Maybe use this to replace the onclick event on the buttons for each search item.
-		alert("heelo");
+		var searchItem = searchCollection[$(this).val()];
+		addVideoSearchAction(searchItem.videoTitle, searchItem.videoId);
+	});
+	
+	$("#search-container").on("click", ".previewVidBtn", function () {
+		previewVideoAction($(this).val());
 	});
 	
 	//Enables the Enter Key to be used in the search bar to trigger the search functionality.
@@ -80,10 +100,17 @@ function addToTable(name, url, rownumber) {
 	var videoURL = url;
 	var videoID = videoURL.match(/v=([^&]+)/)[1];
 
-	var actions = "<div class=\"btn-group\"><button class=\"btn btn-default btnEdit\" value=\"" + rownumber + "\">Edit</button><button class=\"btnCue btn btn-default\" value=\"" + videoID + "\">Cue Video</button><button value=\"" + rownumber + "\" class=\"btnDelete btn btn-default btn-danger\" >Remove</button></div>";
-
-	var row = '<tr><td>' + videoName + '</td><td><a href=\"' + url + '\" target="_blank" class="btn btn-default">View on Youtube</a></td><td>' + actions + '</td></tr>';
-	$("#saveListTable").append(row);
+	var $editBtn = $("<button/>").addClass("btn btn-default btnEdit").attr("value", rownumber).text("Edit");
+	var $cueVideoBtn = $("<button/>").addClass("btn btn-default btnCue").attr("value", videoID).text("Cue Video");
+	var $removeBtn = $("<button/>").addClass("btn btn-default btnDelete btn-danger").attr("value", rownumber).text("Remove");
+	
+	var $divContainer = $("<div/>").addClass("btn-group").append($editBtn, $cueVideoBtn, $removeBtn);
+	
+	var $nameCol = $("<td/>").append(videoName);
+	var $viewCol = $("<td/>").append($("<a>").attr("href", url).attr("target", "_blank").addClass("btn btn-default").text("View on Youtube"));
+	
+	var $row = $("<tr>").append($nameCol, $viewCol, $("<td>").append($divContainer));
+	$("#saveListTable").append($row);
 }
 
 function populateTable() {
@@ -99,11 +126,18 @@ function openModal() {
 function closeModal() {
 	$("#myModal").modal("hide");
 }
-
+function clearModal() {
+	$("#videoNameInput").val("");
+	$("#urlInput").val("");
+}
 function populateModal(name, url) {
 	$("#videoNameInput").val(name);
 	$("#urlInput").val(url);
 	openModal();
+}
+function changeModalAction(action) {
+	$("#modalAction").val(action);
+	$("#modalTitle").text(action);
 }
 
 
@@ -168,7 +202,6 @@ function updateSingleVideo(rownumber, name, url) {
 function removeSingleVideo(rownumber) {
 	//Should just retrieve the new sheet.
 	var index = getSingleVideoIndex(rownumber);
-	console.log("removeSingleVideo rownumber:" + rownumber + " index:" + index);
 	if (index == -1) {
 		return false;
 	}
@@ -177,14 +210,12 @@ function removeSingleVideo(rownumber) {
 }
 
 function previewVideoAction(videoId) {
-	console.log("preview " +videoId);
 	player.loadVideoById({
 		videoId: videoId
 	});
 }
 
 function cueVideoAction(videoID) {
-	console.log("Hello " + videoID);
 	player.cueVideoById({
 		videoId:videoID
 	});
@@ -216,11 +247,11 @@ function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '390',
     width: '640',
-    videoId: 'dv13gl0a-FA',
+    videoId: 'dv13gl0a-FA'/*,
     events: {
-      'onReady': onPlayerReady/*,
-      'onStateChange': onPlayerStateChange*/
-    }
+      'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange
+    }*/
   });
 }
 
