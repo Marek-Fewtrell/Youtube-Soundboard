@@ -12,8 +12,10 @@ function getSheet() {
       spreadsheetId: SPREADSHEET_ID,
       range: 'Sheet1!A2:B',
     }).then(function(response) {
+    	
+    	//TODO: replace this with a function call to separate logic.
     	savedVideosCollection = [];
-    	console.log(response.result);
+    	
     	var results = response.result;
     	if (results.values.length > 0) {
 		  	for (var i = 0; i < results.values.length; i++) {
@@ -22,8 +24,6 @@ function getSheet() {
 		  		
 		  		var videoObject = {"name": name, "url" : url, "rowNumber": 2+i};
 		  		savedVideosCollection.push(videoObject);
-		  		
-		  		console.log(videoObject);
 		  		
 		  		addToTable(videoObject["name"], videoObject["url"], videoObject["rowNumber"]);
 		  	}
@@ -81,7 +81,6 @@ function setMessage(message) {
  *
 */
 function createRow() {
-	console.log("CreateRow function entry");
 	//setModalMessage("Creating new client row.");
   gapi.client.sheets.spreadsheets.values.append({
     spreadsheetId: SPREADSHEET_ID,
@@ -95,7 +94,6 @@ function createRow() {
         ]
       ]
   }).then(function(response) {
-  	console.log(response);
     closeModal();
     visualFeedback("Successfully created .", true);
 
@@ -107,8 +105,6 @@ function createRow() {
     addSingleVideo($("#videoNameInput").val(), $("#urlInput").val(), updatedRange);
     
     addToTable($("#videoNameInput").val(), $("#urlInput").val(), updatedRange);
-    console.log(updatedRange);
-    console.log("CreateRow function exit success");
   }, function(response) {
     visualFeedback("Unsuccessfully created client.", true);
     console.log("CreateRow function failure");
@@ -122,7 +118,6 @@ function createRow() {
  *
 */
 function updateRow(rownumber, newName, newUrl) {
-	console.log("updateRow function entry");
 	//setModalMessage("Updating client row.");
   var therange = 'Sheet1!A' + rownumber + ':B' + rownumber;
   gapi.client.sheets.spreadsheets.values.update({
@@ -158,14 +153,11 @@ function updateRow(rownumber, newName, newUrl) {
  *
 */
 function deleteRow(rownumber) {
-	console.log("deleteRow function entry");
   var therange = 'Sheet1!A' + rownumber + ':B' + rownumber;
   gapi.client.sheets.spreadsheets.values.clear({
     spreadsheetId: SPREADSHEET_ID,
     range: therange
   }).then(function(response) {
-		console.log("deleteRow sucess.");
-		console.log(response);
     //visualFeedback("Successfully deleted client.", true);
     //Remove that item from the collection
     removeSingleVideo(rownumber);

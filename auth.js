@@ -1,10 +1,11 @@
 //========================== Google Access Code Start ==========================
 
-var SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/youtube.readonly"];
-
+//var SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/youtube.readonly"];
+var SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
 
 /**
- * Check if current user has authorized this application.
+ * Check if current user has authorized this application with OAuth client flow.
+ * If previously authorized, no user intervention needed. Otherwise, the user interface that prompts for authorization needs to be displayed.
  */
 function checkAuth() {
   gapi.auth.authorize(
@@ -23,10 +24,12 @@ function checkAuth() {
 function handleAuthResult(authResult) {
   var authorizeDiv = document.getElementById('authorize-div');
   if (authResult && !authResult.error) {
-    // Hide auth UI, then load client library.
+  	//Authorization was successful.
+    // Hide auth UI
     authorizeDiv.style.display = 'none';
-    //loadSheetsApi();
-    loadAPIClientInterfaces();
+    //Previously would load client library but it is already done.
+    //loadAPIClientInterfaces();
+    getSheet();
   } else {
     // Show auth UI, allowing the user to initiate authorization by
     // clicking authorize button.
@@ -46,15 +49,10 @@ function handleAuthClick(event) {
   return false;
 }
 
-/**
- * Load Sheets API client library.
- */
-function loadSheetsApi() {
-  var discoveryUrl =
-      'https://sheets.googleapis.com/$discovery/rest?version=v4';
-  gapi.client.load(discoveryUrl).then(getSheet);
-}
-
+/*
+	Used to load the API interfaces.
+	Deprecated now using the handleInit() function.
+*/
 function loadAPIClientInterfaces() {
 	var sheetsDiscoveryUrl = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
 	var youtubeDiscoveryUrl = "https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest";
@@ -63,6 +61,7 @@ function loadAPIClientInterfaces() {
 	});
 }
 
+//Upon loading, the Google APIs JS client automatically invokes this callback
 function handleInit() {
 	console.log("In handleInit.");
 	var discoveryDocURLs = ["https://sheets.googleapis.com/$discovery/rest?version=v4", "https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"];

@@ -20,10 +20,8 @@ $(document).ready(function() {
 	});
 	
 	$("#saveListTable").on("click", ".btnEdit", function() {
-		console.log("Edit btn click event thisval:" + $(this).val());
 		var index = getSingleVideoIndex($(this).val());
 		var videoItem = savedVideosCollection[index];
-		console.log("Edit btn click event index:" + index);
 		populateModal(videoItem.name, videoItem.url);
 		$("#videoRowNumberHolder").val(videoItem.rowNumber);
 	});
@@ -44,12 +42,10 @@ $(document).ready(function() {
 });
 
 function nextPageSearch() {
-	console.log("Next page search function executed");
 	search(nextSearchPageToken);
 }
 
 function previousPageSearch() {
-	console.log("Previous page search function executed");
 	search(previousSearchPageToken);
 }
   
@@ -79,7 +75,7 @@ function addToTable(name, url, rownumber) {
 		//rownumber = 0;
 		return;
 	}*/
-	console.log("AddToTable function rownumber:" + rownumber);
+	
 	var videoName = name;
 	var videoURL = url;
 	var videoID = videoURL.match(/v=([^&]+)/)[1];
@@ -170,8 +166,7 @@ function updateSingleVideo(rownumber, name, url) {
 }
 
 function removeSingleVideo(rownumber) {
-console.log("removeSingleVideo function entry");
-//Should just retrieve the new sheet.
+	//Should just retrieve the new sheet.
 	var index = getSingleVideoIndex(rownumber);
 	console.log("removeSingleVideo rownumber:" + rownumber + " index:" + index);
 	if (index == -1) {
@@ -209,7 +204,7 @@ function stopVideo() {
 	
 function initialisePlayer() {
 	var tag = document.createElement('script');
-			
+	
 	tag.src = "https://www.youtube.com/iframe_api";
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);

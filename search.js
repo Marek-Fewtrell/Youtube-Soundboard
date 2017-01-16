@@ -1,6 +1,9 @@
 
-function handleAPILoaded() {
-	//enable buttons to be used or something.
+/*
+ * Deprecated
+ * Previously used to load the search api.
+*/
+function handleSearchAPILoaded() {
 	gapi.client.setApiKey(apiKey);
 	var discoveryUrl = "https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest";
 	/*gapi.client.load('youtube', 'v3', function() {
@@ -13,7 +16,6 @@ function handleAPILoaded() {
 function search(pageToken) {
 	if (pageToken === undefined) {
 		pageToken = "";
-		console.log("no page token given");
 	}
 	
 	var q = $("#query").val();
@@ -24,16 +26,12 @@ function search(pageToken) {
 		pageToken: pageToken //Forgot to add this variable.
 	});
 	
-	console.log("page token before request:" + pageToken);
-	
 	request.execute(function(response) {
 		$("#search-container").empty();
-		console.log(response);
-	
+		
 		var results = response.result;
-		console.log(results);
-		nextSearchPageToken = (typeof results.nextPageToken != 'undefined') ? results.nextPageToken : "blah2";
-		previousSearchPageToken = (typeof results.prevPageToken != 'undefined') ? results.prevPageToken : "";
+		nextSearchPageToken = (results.nextPageToken !== undefined) ? results.nextPageToken : "blah2";
+		previousSearchPageToken = (results.prevPageToken !== undefined) ? results.prevPageToken : "";
 		
 		if (nextSearchPageToken == "") {
 			$("#nextSearchPageBtn").prop("disabled", true);
@@ -46,10 +44,6 @@ function search(pageToken) {
 		} else {
 			$("#previosSearchPageBtn").prop("disabled", false);
 		}
-		
-		console.log("next page token after request: " + nextSearchPageToken);
-		console.log("previous page token before request: " + previousSearchPageToken);
-		
 		
 		$.each(results.items, function(index, item) {
 			
