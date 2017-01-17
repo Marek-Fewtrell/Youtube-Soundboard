@@ -1,7 +1,7 @@
 //========================== Google Access Code Start ==========================
 
 //var SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/youtube.readonly"];
-var SCOPES = ["https://www.googleapis.com/auth/spreadsheets"];
+var SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive.metadata.readonly"];
 
 /**
  * Check if current user has authorized this application with OAuth client flow.
@@ -29,7 +29,8 @@ function handleAuthResult(authResult) {
     authorizeDiv.style.display = 'none';
     //Previously would load client library but it is already done.
     //loadAPIClientInterfaces();
-    getSheet();
+    //getSheet();
+    getSpreadsheetID();
   } else {
     // Show auth UI, allowing the user to initiate authorization by
     // clicking authorize button.
@@ -64,7 +65,7 @@ function loadAPIClientInterfaces() {
 //Upon loading, the Google APIs JS client automatically invokes this callback
 function handleInit() {
 	console.log("In handleInit.");
-	var discoveryDocURLs = ["https://sheets.googleapis.com/$discovery/rest?version=v4", "https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"];
+	var discoveryDocURLs = ["https://sheets.googleapis.com/$discovery/rest?version=v4", "https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest", "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
 	gapi.client.init(
 		{
 			apiKey: apiKey, 
