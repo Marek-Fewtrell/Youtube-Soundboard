@@ -10,7 +10,7 @@ function getSheet() {
 	setMessage("Loading data, please wait");
   gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
-      range: 'Sheet1!A2:B',
+      range: 'Sheet1!A2:B'
     }).then(function(response) {
     	
     	//TODO: replace this with a function call to separate logic.
@@ -25,8 +25,9 @@ function getSheet() {
 		  		var videoObject = {"name": name, "url" : url, "rowNumber": 2+i};
 		  		savedVideosCollection.push(videoObject);
 		  		
-		  		addToTable(videoObject["name"], videoObject["url"], videoObject["rowNumber"]);
+		  		//addToTable(videoObject["name"], videoObject["url"], videoObject["rowNumber"]);
 		  	}
+		  	populateTable();
 		  	//visualFeedback(message, status);
     	} else {
     		console.log('No data found');

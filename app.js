@@ -51,6 +51,12 @@ $(document).ready(function() {
 		previewVideoAction($(this).val());
 	});
 	
+	$("#fileSelector").on("click", ".spreadSheetIDBtn", function() {
+		SPREADSHEET_ID = $(this).val();
+		$("#myModal2").modal("hide");
+		getSheet();
+	});
+	
 	//Enables the Enter Key to be used in the search bar to trigger the search functionality.
 	$("#query").keypress(function (e) {
 		if (e.which == 13) {
