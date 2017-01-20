@@ -10,7 +10,7 @@
 	<body>
 		<div class="container-fluid text-center">
 			<div>
-				<h2>Youtube Soundboard <button class="btn btn-default glyphicon glyphicon-cog" data-toggle="modal" onclick="getSpreadsheetID()" data-target="#myModal2"></button></h2>
+				<h2>Youtube Soundboard <button class="btn btn-default glyphicon glyphicon-cog" data-toggle="modal" data-target="#myModal2"></button></h2>
 				
 			</div>
 			
@@ -121,7 +121,10 @@
 								</p>
 							</div>
 							<div class="well well-sm">
-								Select a pre-existing spreadsheet file to load it.
+								<h4>Existing Files<button type="button" id="refreshSpreadsheetListBtn" value="" onclick="getSpreadsheetID()" class="btn btn-default glyphicon glyphicon-refresh" ></button></h4>
+								
+								Select a pre-existing spreadsheet file to load it.<br />
+								<span id="retrievespreadsheetIdError" class="label label-danger"></span>
 								<div id="fileSelector" class="list-group">
 								</div>								
 							</div>
@@ -145,7 +148,7 @@
 		<script src="sheetapp.js"></script>
 		<script src="drive.js"></script>
 		<script src="bootstrap/js/bootstrap.min.js"></script>
-		<script src="https://apis.google.com/js/client.js?onload=handleInit"></script>
+		<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
 	</body>
 </html>
 

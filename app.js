@@ -53,6 +53,7 @@ $(document).ready(function() {
 	
 	$("#fileSelector").on("click", ".spreadSheetIDBtn", function() {
 		SPREADSHEET_ID = $(this).val();
+		$(this).addClass("active");
 		$("#myModal2").modal("hide");
 		getSheet();
 	});

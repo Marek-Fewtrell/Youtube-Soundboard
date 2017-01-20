@@ -22,19 +22,19 @@ function checkAuth() {
  * @param {Object} authResult Authorization result.
  */
 function handleAuthResult(authResult) {
-  var authorizeDiv = document.getElementById('authorize-div');
+  var authorizeDiv = $('#authorize-div');
+  console.log("handleAuthResult function");
+  console.log(authResult);
   if (authResult && !authResult.error) {
   	//Authorization was successful.
     // Hide auth UI
-    authorizeDiv.style.display = 'none';
-    //Previously would load client library but it is already done.
-    //loadAPIClientInterfaces();
+    authorizeDiv.css("display", 'none');
     //getSheet();
     getSpreadsheetID();
   } else {
     // Show auth UI, allowing the user to initiate authorization by
     // clicking authorize button.
-    authorizeDiv.style.display = 'inline';
+    authorizeDiv.css("display", 'inline');
   }
 }
 
@@ -64,17 +64,34 @@ function loadAPIClientInterfaces() {
 
 //Upon loading, the Google APIs JS client automatically invokes this callback
 function handleInit() {
-	console.log("In handleInit.");
-	var discoveryDocURLs = ["https://sheets.googleapis.com/$discovery/rest?version=v4", "https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest", "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
-	gapi.client.init(
-		{
-			apiKey: apiKey, 
-			discoveryDocs : discoveryDocURLs, 
-			clientId: CLIENT_ID, 
-			scope : SCOPES
-		});
-		checkAuth();
-	console.log("Finished handleInit.");
+	var discoveryDocURLs = [
+		"https://sheets.googleapis.com/$discovery/rest?version=v4", 
+		"https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest", 
+		"https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"
+	];
+	gapi.client.init({
+		apiKey: apiKey, 
+		discoveryDocs : discoveryDocURLs,
+		clientId: CLIENT_ID, 
+		scope : SCOPES,
+	});
+	//Unable to use .then() functionality here.
+	checkAuth();
+	/*function() { 
+		$("#authorize-div").text("Everything is alright.");
+		$("#authorize-div").css("display", 'inline');
+		
+	}, function (response) {
+		/*console.log("handleInit init response error:" + response.error.code + "\n" + response.error.message);
+		console.log(response);*//*
+		$("#authorize-div").text("An error has occured, please refresh the page.");
+		$("#authorize-div").css("display", 'inline');
+	});*/
+		
+}
+
+function handleClientLoad() {
+	gapi.load('client:auth2', handleInit);
 }
 
 //========================== Google Access Code End ==========================
