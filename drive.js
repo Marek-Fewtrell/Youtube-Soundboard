@@ -1,46 +1,54 @@
 
+var spreadsheetSearchNextPageToken = "";
+
 /**
  * Print files.
  */
-function getSpreadsheetID() {
+function getSpreadsheetID(pageToken) {
+	if (pageToken === undefined) {
+		pageToken = "";
+	}
   var request = gapi.client.drive.files.list({
       'pageSize': 10,
-      'fields': "nextPageToken, files(id, name)",
-      'q' : "name='Youtube Soundboard' or mimeType contains 'spreadsheet'"
+      //'fields': "nextPageToken, files(id, name)",
+      'q' : "trashed = false and mimeType contains 'application/vnd.google-apps.spreadsheet'",
+      'pageToken' : pageToken
     }).then(function(resp) {
-    $("#retrievespreadsheetIdError").text("");
-    	console.log("getSpreadsheetID function success");
-	  	console.log(resp);
+    	console.log(resp);
+    	$("#retrievespreadsheetIdError").text("");
 	    var files = resp.result.files;
 	    $("#fileSelector").empty();
 	    if (files.length == 1) {
 	    	var file = files[0];
-	    	/*console.log("Found the one file:");
-	    	console.log(file.name + " id(" + file.id + ")");*/
-	    	SPREADSHEET_ID = file.id;
-	    	getSheet();
+	    	var $item = $("<button>").text(file.name).addClass("list-group-item spreadSheetIDBtn").val(file.id);
+	      $("#fileSelector").append($item);
+	    	$("#myModal2").modal("show");
 	    } else {
 			  if (files && files.length > 0) {
-			  	console.log('Files:');
 			    for (var i = 0; i < files.length; i++) {
 			      var file = files[i];
-			      console.log(file.name + ' (' + file.id + ')');
-			      
 			      var $item = $("<button>").text(file.name).addClass("list-group-item spreadSheetIDBtn").val(file.id);
 			      if (file.id == SPREADSHEET_ID) {
 			      	$item.addClass("active");
 			      }
 			      $("#fileSelector").append($item);
 			    }
-			    $("#myModal2").modal();
+			    
+			    spreadsheetSearchNextPageToken = (resp.result.nextPageToken != undefined) ? resp.result.nextPageToken : "";
+			    
+			    if (resp.result.nextPageToken != undefined) {
+			    	$("#spreadsheetSelectNextPage").removeClass("hidden");
+			    }
+			    
+			    
+			    $("#myModal2").modal("show");
 			  } else {
-			    console.log('No files found.');
+			  	var $item = $("<span>").text("No files found.").addClass("list-group-item");
+	      	$("#fileSelector").append($item);
+			  	$("#myModal2").modal("show");
 			  }
 	    }
     }, function(reason) {
-    	console.log("getSpreadsheetID function failure");
-    	console.log(reason);
-    	
     	if (reason.status == 400) {
   			console.log("error code 400");
   			$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
@@ -48,8 +56,6 @@ function getSpreadsheetID() {
   			console.log("error code 401");
   			$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
   		} else if (reason.status == 403) {
-  			//var regexExp = /LimitExceeded/;
-  			
   			switch(reason.result.error.errors[0].reason) {
   				case "dailyLimitExceeded":
   				case "userRateLimitExceeded":
@@ -69,7 +75,6 @@ function getSpreadsheetID() {
   				default: 
   					$("#retrievespreadsheetIdError").text("The function has failed to do something correctly");
   			}
-  			
   		} else if (reason.status == 404) {
   			$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
   		} else if (reason.status == 500) {
@@ -112,6 +117,7 @@ function createSheet() {
       	}
       ]
     }).then(function(response) {
+	    $("#retrievespreadsheetIdErrorCreate").text("");
     	console.log(response);
     	var result = response.result;
     	
@@ -120,8 +126,37 @@ function createSheet() {
 			var $item = $("<button>").text(result.properties.title + "(New)").addClass("list-group-item spreadSheetIDBtn").val(result.spreadsheetId);
 			$("#fileSelector").prepend($item);
 			
-  }, function(response) {
-    //setMessage('Error: ' + response.result.error.message);
-    console.log(response);
+  }, function(reason) {
+  	console.log(reason);
+    if (reason.status == 400) {
+  			console.log("error code 400");
+  			$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
+  		} else if (reason.status == 401) {
+  			$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
+  		} else if (reason.status == 403) {
+  			switch(reason.result.error.errors.reason) {
+  				case "dailyLimitExceeded":
+  				case "userRateLimitExceeded":
+  				case "rateLimitExceeded":
+  				case "sharingRateLimitExceeded":
+  					$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
+  					break;
+  				case "appNotAuthorizedToFile":
+  					$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
+  					break;
+  				case "insufficientFilePermissions":
+  					$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
+  					break;
+  				case "domainPolicy":
+  					$("#retrievespreadsheetIdErrorCreate").text("Cannot be used with user's domain");
+  					break;
+  				default: 
+  					$("#retrievespreadsheetIdErrorCreate").text("The function has failed to do something correctly");
+  			}
+  		} else if (reason.status == 404) {
+  			$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
+  		} else if (reason.status == 500) {
+  			$("#retrievespreadsheetIdErrorCreate").text("An unexpected error occured.");
+  		}
   });
 }

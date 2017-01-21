@@ -12,12 +12,15 @@ function getSheet() {
       spreadsheetId: SPREADSHEET_ID,
       range: 'Sheet1!A2:B'
     }).then(function(response) {
-    	
+    $("#savedVideosError").addClass("hidden");
+    	console.log(response);
     	//TODO: replace this with a function call to separate logic.
     	savedVideosCollection = [];
     	
     	var results = response.result;
-    	if (results.values.length > 0) {
+    	if (results.values != undefined && results.values.length > 0) {
+    		$("#savedVideosInfo").addClass("hidden");
+    	
 		  	for (var i = 0; i < results.values.length; i++) {
 		  		var name = (results.values[i][0] === undefined) ? "" : results.values[i][0];
 		  		var url = (results.values[i][1] === undefined) ? "" : results.values[i][1];
@@ -30,7 +33,9 @@ function getSheet() {
 		  	populateTable();
 		  	//visualFeedback(message, status);
     	} else {
-    		console.log('No data found');
+    		$("#savedVideosInfo").text('No data in table');
+    		$("#savedVideosInfo").removeClass("hidden");
+    		populateTable();
     	}
 			setMessage(" ");
 			
@@ -38,6 +43,39 @@ function getSheet() {
 			
   }, function(response) {
     setMessage('Error: ' + response.result.error.message);
+    console.log(response);
+    $("#savedVideosError").removeClass("hidden");
+    if (response.status == 400) {
+  			console.log("error code 400");
+  			$("#savedVideosError").text(response.result.error.message);
+  		} else if (response.status == 401) {
+  			console.log("error code 401");
+  			$("#savedVideosError").text(response.result.error.message);
+  		} else if (response.status == 403) {
+  			switch(response.result.error.errors[0].reason) {
+  				case "dailyLimitExceeded":
+  				case "userRateLimitExceeded":
+  				case "rateLimitExceeded":
+  				case "sharingRateLimitExceeded":
+  					$("#savedVideosError").text(response.result.error.message);
+  					break;
+  				case "appNotAuthorizedToFile":
+  					$("#savedVideosError").text(response.result.error.message);
+  					break;
+  				case "insufficientFilePermissions":
+  					$("#savedVideosError").text(response.result.error.message);
+  					break;
+  				case "domainPolicy":
+  					$("#savedVideosError").text("Cannot be used with user's domain");
+  					break;
+  				default: 
+  					$("#savedVideosError").text("The function has failed to do something correctly");
+  			}
+  		} else if (response.status == 404) {
+  			$("#savedVideosError").text(response.result.error.message);
+  		} else if (response.status == 500) {
+  			$("#savedVideosError").text("An unexpected error occured.");
+  		}
   });
 }
 
@@ -95,6 +133,7 @@ function createRow() {
         ]
       ]
   }).then(function(response) {
+	  $("#createEditModalError").addClass("hidden");
     closeModal();
     visualFeedback("Successfully created .", true);
 
@@ -110,6 +149,38 @@ function createRow() {
     visualFeedback("Unsuccessfully created client.", true);
     console.log("CreateRow function failure");
     console.log(response);
+    $("#createEditModalError").removeClass("hidden");
+    if (response.status == 400) {
+  			console.log("error code 400");
+  			$("#createEditModalError").text(response.result.error.message);
+  		} else if (response.status == 401) {
+  			console.log("error code 401");
+  			$("#createEditModalError").text(response.result.error.message);
+  		} else if (response.status == 403) {
+  			switch(response.result.error.errors[0].reason) {
+  				case "dailyLimitExceeded":
+  				case "userRateLimitExceeded":
+  				case "rateLimitExceeded":
+  				case "sharingRateLimitExceeded":
+  					$("#createEditModalError").text(response.result.error.message);
+  					break;
+  				case "appNotAuthorizedToFile":
+  					$("#createEditModalError").text(response.result.error.message);
+  					break;
+  				case "insufficientFilePermissions":
+  					$("#createEditModalError").text(response.result.error.message);
+  					break;
+  				case "domainPolicy":
+  					$("#createEditModalError").text("Cannot be used with user's domain");
+  					break;
+  				default: 
+  					$("#createEditModalError").text("The function has failed to do something correctly");
+  			}
+  		} else if (response.status == 404) {
+  			$("#createEditModalError").text(response.result.error.message);
+  		} else if (response.status == 500) {
+  			$("#createEditModalError").text("An unexpected error occured.");
+  		}
   });
 }
 
@@ -138,13 +209,45 @@ function updateRow(rownumber, newName, newUrl) {
 		if (response.result.updatedCells === 4) {}
 		*/
     //debuggingText(response);
-
+		$("#createEditModalError").addClass("hidden");
 		updateSingleVideo(rownumber, newName, newUrl);
 		populateTable();
     closeModal();
     visualFeedback("Successfully updated client.", true);
   }, function(response) {
     visualFeedback("Unsuccessfully updated client.", false);
+    $("#createEditModalError").removeClass("hidden");
+    if (response.status == 400) {
+  			console.log("error code 400");
+  			$("#createEditModalError").text(response.result.error.message);
+  		} else if (response.status == 401) {
+  			console.log("error code 401");
+  			$("#createEditModalError").text(response.result.error.message);
+  		} else if (response.status == 403) {
+  			switch(response.result.error.errors[0].reason) {
+  				case "dailyLimitExceeded":
+  				case "userRateLimitExceeded":
+  				case "rateLimitExceeded":
+  				case "sharingRateLimitExceeded":
+  					$("#createEditModalError").text(response.result.error.message);
+  					break;
+  				case "appNotAuthorizedToFile":
+  					$("#createEditModalError").text(response.result.error.message);
+  					break;
+  				case "insufficientFilePermissions":
+  					$("#createEditModalError").text(response.result.error.message);
+  					break;
+  				case "domainPolicy":
+  					$("#createEditModalError").text("Cannot be used with user's domain");
+  					break;
+  				default: 
+  					$("#createEditModalError").text("The function has failed to do something correctly");
+  			}
+  		} else if (response.status == 404) {
+  			$("#createEditModalError").text(response.result.error.message);
+  		} else if (response.status == 500) {
+  			$("#createEditModalError").text("An unexpected error occured.");
+  		}
   });
 }
 
@@ -159,6 +262,7 @@ function deleteRow(rownumber) {
     spreadsheetId: SPREADSHEET_ID,
     range: therange
   }).then(function(response) {
+  	$("#createEditModalError").addClass("hidden");
     //visualFeedback("Successfully deleted client.", true);
     //Remove that item from the collection
     removeSingleVideo(rownumber);
@@ -168,5 +272,38 @@ function deleteRow(rownumber) {
 		console.log("deleteRow failure");
 		console.log(response);
     visualFeedback("Unsuccessfully deleted client.", false);
+    
+    $("#createEditModalError").removeClass("hidden");
+    if (response.status == 400) {
+  			console.log("error code 400");
+  			$("#createEditModalError").text(response.result.error.message);
+  		} else if (response.status == 401) {
+  			console.log("error code 401");
+  			$("#createEditModalError").text(response.result.error.message);
+  		} else if (response.status == 403) {
+  			switch(response.result.error.errors[0].reason) {
+  				case "dailyLimitExceeded":
+  				case "userRateLimitExceeded":
+  				case "rateLimitExceeded":
+  				case "sharingRateLimitExceeded":
+  					$("#createEditModalError").text(response.result.error.message);
+  					break;
+  				case "appNotAuthorizedToFile":
+  					$("#createEditModalError").text(response.result.error.message);
+  					break;
+  				case "insufficientFilePermissions":
+  					$("#createEditModalError").text(response.result.error.message);
+  					break;
+  				case "domainPolicy":
+  					$("#createEditModalError").text("Cannot be used with user's domain");
+  					break;
+  				default: 
+  					$("#createEditModalError").text("The function has failed to do something correctly");
+  			}
+  		} else if (response.status == 404) {
+  			$("#createEditModalError").text(response.result.error.message);
+  		} else if (response.status == 500) {
+  			$("#createEditModalError").text("An unexpected error occured.");
+  		}
   });
 }

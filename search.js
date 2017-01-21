@@ -26,9 +26,8 @@ function search(pageToken) {
 		part: 'snippet',
 		type: 'video',
 		pageToken: pageToken //Forgot to add this variable.
-	});
-	
-	request.execute(function(response) {
+	}).then(function(response) {
+		$("#searchError").text("");
 		$("#search-container").empty();
 		searchCollection = [];
 		
@@ -86,10 +85,41 @@ function search(pageToken) {
 			$("#search-container").append($mainContainer);
 			
 		});
-	}, function (response) {
+	}, function(response) {
 		console.log("Search error");
 		console.log(response);
-	})
+    if (response.status == 400) {
+  			console.log("error code 400");
+  			$("#searchError").text(response.result.error.message);
+  		} else if (response.status == 401) {
+  			console.log("error code 401");
+  			$("#searchError").text(response.result.error.message);
+  		} else if (response.status == 403) {
+  			switch(response.result.error.errors[0].reason) {
+  				case "dailyLimitExceeded":
+  				case "userRateLimitExceeded":
+  				case "rateLimitExceeded":
+  				case "sharingRateLimitExceeded":
+  					$("#searchError").text(response.result.error.message);
+  					break;
+  				case "appNotAuthorizedToFile":
+  					$("#searchError").text(response.result.error.message);
+  					break;
+  				case "insufficientFilePermissions":
+  					$("#searchError").text(response.result.error.message);
+  					break;
+  				case "domainPolicy":
+  					$("#searchError").text("Cannot be used with user's domain");
+  					break;
+  				default: 
+  					$("#searchError").text("The function has failed to do something correctly");
+  			}
+  		} else if (response.status == 404) {
+  			$("#searchError").text(response.result.error.message);
+  		} else if (response.status == 500) {
+  			$("#searchError").text("An unexpected error occured.");
+  		}
+	});
 }
 
 

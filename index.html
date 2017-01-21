@@ -43,6 +43,7 @@
 						<div>
 							<h3>Search</h3>
 							<div class="input-group">
+								<span class="label label-danger" id="searchError"></span>
 								<input type="text" class="form-control" placeholder="search" id="query" />
 								<div class="input-group-btn">
 									<button id="btnQuery" type="button" class="btn btn-default btn-primary" onclick="search()">
@@ -65,7 +66,8 @@
 						<h3>Saved Videos</h3>
 						<button type="button" id="refreshSavedVideosBtn" value="" onclick="refreshSavedVideoTable()" class="btn btn-default glyphicon glyphicon-refresh disabled" ></button>
 						<button type="button" id="newSavedVideoBtn" value="" onclick="" data-toggle="modal" data-target="#myModal" class="btn btn-default">New Video</button>
-						
+						<span class="hidden label label-info" id="savedVideosInfo"></span>
+						<span class="hidden label label-danger" id="savedVideosError"></span>
 						<div class="table-responsive">
 							<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="text-center table table-striped table-bordered table-condensed">
 								<tr>
@@ -90,6 +92,7 @@
 							<h4 class="modal-title"><span id="modalTitle" class="text-capitalize">Create/Edit</span> Saved Video</h4>
 						</div>
 						<div class="modal-body">
+							<span class="label label-danger hidden" id="createEditModalError"></span>
 							<input type="hidden" id="videoRowNumberHolder" />
 							<input class="form-control" type="text" name="videoNameInput" value="" placeholder="Video Name" id="videoNameInput" />
 							<input class="form-control" type="text" name="urlInput" value="" placeholder="Youtube URL" id="urlInput" />
@@ -98,8 +101,8 @@
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 							<button type="button" class="btn btn-success" id="modalApplyBtn" onclick="">Apply</button>
-							<button class="btn btn-default" type="button" name="urlInputButton" disabled value="Add Video" onclick="addVideoURLAction()">Add Video</button>
-							<button class="btn btn-default" type="button" name="urlInputButton" disabled value="Update Video" onclick="updateVideoAction()">Update Video</button>
+							<!--<button class="btn btn-default" type="button" name="urlInputButton" disabled value="Add Video" onclick="addVideoURLAction()">Add Video</button>
+							<button class="btn btn-default" type="button" name="urlInputButton" disabled value="Update Video" onclick="updateVideoAction()">Update Video</button>-->
 						</div>
 					</div>
 				</div>
@@ -111,6 +114,7 @@
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal">&times;</button>
 							<h4 class="modal-title">App Settings</h4>
+							<span id="retrievespreadsheetIdErrorHeader" class="label label-danger"></span><!-- Use this area for unauthorised notices -->
 						</div>
 						<div class="modal-body">
 							<div class="well well-sm" >
@@ -118,6 +122,7 @@
 									This application uses Google Spreadsheet to store data.
 									Click the button to create a new spreadsheet to store the data. <br />
 									<button id="createSpreadsheetBtn" class="btn btn-default" onclick="createSheet()">Create Spreadsheet</button>
+									<span id="retrievespreadsheetIdErrorCreate" class="label label-danger"></span>
 								</p>
 							</div>
 							<div class="well well-sm">
@@ -126,7 +131,9 @@
 								Select a pre-existing spreadsheet file to load it.<br />
 								<span id="retrievespreadsheetIdError" class="label label-danger"></span>
 								<div id="fileSelector" class="list-group">
-								</div>								
+								</div>
+								<button id="spreadsheetSelectNextPage" class="btn btn-default hidden" value="" onclick="nextSpreadsheetSearch()">Next</button>
+								<button id="spreadsheetSelectPrevPage" class="btn btn-default hidden" value="" onclick="">Previous</button>							
 							</div>
 						</div>
 						<div class="modal-footer">

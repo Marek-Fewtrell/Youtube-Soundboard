@@ -23,8 +23,6 @@ function checkAuth() {
  */
 function handleAuthResult(authResult) {
   var authorizeDiv = $('#authorize-div');
-  console.log("handleAuthResult function");
-  console.log(authResult);
   if (authResult && !authResult.error) {
   	//Authorization was successful.
     // Hide auth UI

@@ -52,10 +52,16 @@ $(document).ready(function() {
 	});
 	
 	$("#fileSelector").on("click", ".spreadSheetIDBtn", function() {
+		$(".spreadSheetIDBtn").removeClass("active");
+		
 		SPREADSHEET_ID = $(this).val();
 		$(this).addClass("active");
 		$("#myModal2").modal("hide");
 		getSheet();
+	});
+	
+	$("#myModal").on('show.bs.modal', function () {
+		$("#createEditModalError").addClass("hidden");
 	});
 	
 	//Enables the Enter Key to be used in the search bar to trigger the search functionality.
@@ -74,6 +80,10 @@ function nextPageSearch() {
 
 function previousPageSearch() {
 	search(previousSearchPageToken);
+}
+
+function nextSpreadsheetSearch() {
+	getSpreadsheetID(spreadsheetSearchNextPageToken);
 }
   
 function addVideoURLAction() {
