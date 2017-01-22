@@ -32,7 +32,7 @@ function search(pageToken) {
 		searchCollection = [];
 		
 		var results = response.result;
-		nextSearchPageToken = (results.nextPageToken !== undefined) ? results.nextPageToken : "blah2";
+		nextSearchPageToken = (results.nextPageToken !== undefined) ? results.nextPageToken : "";
 		previousSearchPageToken = (results.prevPageToken !== undefined) ? results.prevPageToken : "";
 		
 		if (nextSearchPageToken == "") {

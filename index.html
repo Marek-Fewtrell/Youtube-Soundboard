@@ -126,14 +126,14 @@
 								</p>
 							</div>
 							<div class="well well-sm">
-								<h4>Existing Files<button type="button" id="refreshSpreadsheetListBtn" value="" onclick="getSpreadsheetID()" class="btn btn-default glyphicon glyphicon-refresh" ></button></h4>
+								<h4>Existing Files<button type="button" id="refreshSpreadsheetListBtn" value="" onclick="clearSpreadsheetCollection()" class="btn btn-default glyphicon glyphicon-refresh" ></button></h4>
 								
 								Select a pre-existing spreadsheet file to load it.<br />
 								<span id="retrievespreadsheetIdError" class="label label-danger"></span>
 								<div id="fileSelector" class="list-group">
 								</div>
-								<button id="spreadsheetSelectNextPage" class="btn btn-default hidden" value="" onclick="nextSpreadsheetSearch()">Next</button>
-								<button id="spreadsheetSelectPrevPage" class="btn btn-default hidden" value="" onclick="">Previous</button>							
+								<button id="spreadsheetSelectNextPage" class="btn btn-default" value="" onclick="handleSpreadsheetSearchPages('next')">Next</button>
+								<button id="spreadsheetSelectPrevPage" class="btn btn-default" disabled=true value="" onclick="handleSpreadsheetSearchPages('previous')">Previous</button>							
 							</div>
 						</div>
 						<div class="modal-footer">

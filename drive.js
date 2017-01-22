@@ -1,5 +1,8 @@
 
+var spreadsheetSearchCollection = [];
 var spreadsheetSearchNextPageToken = "";
+var spreadsheetSearchCurrentPage = 0;
+var spreadsheetSearchTotalPages = 0;
 
 /**
  * Print files.
@@ -18,36 +21,41 @@ function getSpreadsheetID(pageToken) {
     	$("#retrievespreadsheetIdError").text("");
 	    var files = resp.result.files;
 	    $("#fileSelector").empty();
-	    if (files.length == 1) {
-	    	var file = files[0];
-	    	var $item = $("<button>").text(file.name).addClass("list-group-item spreadSheetIDBtn").val(file.id);
-	      $("#fileSelector").append($item);
-	    	$("#myModal2").modal("show");
-	    } else {
-			  if (files && files.length > 0) {
-			    for (var i = 0; i < files.length; i++) {
-			      var file = files[i];
-			      var $item = $("<button>").text(file.name).addClass("list-group-item spreadSheetIDBtn").val(file.id);
-			      if (file.id == SPREADSHEET_ID) {
-			      	$item.addClass("active");
-			      }
-			      $("#fileSelector").append($item);
-			    }
-			    
-			    spreadsheetSearchNextPageToken = (resp.result.nextPageToken != undefined) ? resp.result.nextPageToken : "";
-			    
-			    if (resp.result.nextPageToken != undefined) {
-			    	$("#spreadsheetSelectNextPage").removeClass("hidden");
-			    }
-			    
-			    
-			    $("#myModal2").modal("show");
-			  } else {
-			  	var $item = $("<span>").text("No files found.").addClass("list-group-item");
-	      	$("#fileSelector").append($item);
-			  	$("#myModal2").modal("show");
-			  }
-	    }
+
+		  if (files && files.length > 0) {
+		    for (var i = 0; i < files.length; i++) {
+		      var file = files[i];
+		      spreadsheetSearchCollection.push(file);
+		      /*var $item = $("<button>").text(file.name).addClass("list-group-item spreadSheetIDBtn").val(file.id);
+		      if (file.id == SPREADSHEET_ID) {
+		      	$item.addClass("active");
+		      }
+		      $("#fileSelector").append($item);*/
+		      spreadsheetSearchPopulateItem(file);
+		    }
+		    
+		    var totalPages = spreadsheetSearchCollection.length / 10;
+		    if ((spreadsheetSearchCollection.length % 10) > 0 ) {
+		    	totalPages++;
+		    }
+		    
+		    spreadsheetSearchTotalPages = totalPages;
+		    
+		    spreadsheetSearchNextPageToken = (resp.result.nextPageToken != undefined) ? resp.result.nextPageToken : "";
+		    
+		    if (resp.result.nextPageToken != undefined) {
+		    	$("#spreadsheetSelectNextPage").prop("disabled", false);
+		    } else {
+		    	$("#spreadsheetSelectNextPage").prop("disabled", true);
+		    }
+		    
+		    $("#myModal2").modal("show");
+		  } else {
+		  	var $item = $("<span>").text("No files found.").addClass("list-group-item");
+      	$("#fileSelector").append($item);
+		  	$("#myModal2").modal("show");
+		  }
+
     }, function(reason) {
     	if (reason.status == 400) {
   			console.log("error code 400");
@@ -83,6 +91,58 @@ function getSpreadsheetID(pageToken) {
     });
 }
 
+function spreadsheetSearchPopulateItem(file) {
+	var $item = $("<button>").text(file.name).addClass("list-group-item spreadSheetIDBtn").val(file.id);
+	if (file.id == SPREADSHEET_ID) {
+  	$item.addClass("active");
+  }
+  $("#fileSelector").append($item);
+}
+
+function clearSpreadsheetCollection() {
+	spreadsheetSearchCollection = [];
+	spreadsheetSearchNextPageToken = "";
+	spreadsheetSearchCurrentPage = 0;
+	spreadsheetSearchTotalPages = 0;
+	getSpreadsheetID();
+}
+
+function handleSpreadsheetSearchPages(action) {
+	
+	if (action == "next" ) {//&& spreadsheetSearchCurrentPage + 1 <= spreadsheetSearchTotalPages) {
+		spreadsheetSearchCurrentPage++;
+	} else if (action == "previous") {
+		spreadsheetSearchCurrentPage--;
+	}
+
+	var startIndex = spreadsheetSearchCurrentPage * 10;
+	var endIndex = ((startIndex+10) > spreadsheetSearchCollection.length) ? spreadsheetSearchCollection.length : startIndex+10;
+	
+
+	if (spreadsheetSearchNextPageToken == "" && spreadsheetSearchCurrentPage + 1 > spreadsheetSearchTotalPages-1) {
+		$("#spreadsheetSelectNextPage").prop("disabled", true);
+	} else {
+		$("#spreadsheetSelectNextPage").prop("disabled", false);
+	}
+
+	if (spreadsheetSearchCurrentPage - 1 < 0) {
+		$("#spreadsheetSelectPrevPage").prop("disabled", true);
+	} else {
+		$("#spreadsheetSelectPrevPage").prop("disabled", false);
+	}
+
+	$("#fileSelector").empty();
+	for (var i = startIndex; i < endIndex; i++) {
+		spreadsheetSearchPopulateItem(spreadsheetSearchCollection[i]);
+	}
+	
+	if (spreadsheetSearchNextPageToken != "" && startIndex >= spreadsheetSearchCollection.length) {
+		getSpreadsheetID(spreadsheetSearchNextPageToken);
+		$("#spreadsheetSelectPrevPage").prop("disabled", false);
+		return;
+	}
+	
+}
 
 function createSheet() {
 	var spreadsheetName = prompt("Enter file name", "Youtube Sounboard");
