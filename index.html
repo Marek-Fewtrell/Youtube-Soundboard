@@ -11,7 +11,6 @@
 		<div class="container-fluid text-center">
 			<div>
 				<h2>Youtube Soundboard <button class="btn btn-default glyphicon glyphicon-cog" data-toggle="modal" data-target="#myModal2"></button></h2>
-				
 			</div>
 			
 			<div id="authorize-div" style="display: none">
@@ -23,7 +22,7 @@
 		  </div>
 			
 			<span id="statusMessages"></span>
-			<span class="visualFeedback"></span>
+			<span id="visualFeedback"></span>
 			
 			<div class="row">
 				<div class="col-md-6">
@@ -55,8 +54,8 @@
 							
 							<div id="search-container" class="text-left"></div><br />
 							
-							<button class="btn btn-default" id="previosSearchPageBtn" type="button" name="name" value="" onclick="previousPageSearch()">Previous Page</button>
-							<button class="btn btn-default" id="nextSearchPageBtn" type="button" name="name" value="" onclick="nextPageSearch()">Next Page</button>
+							<button class="btn btn-default" id="previosSearchPageBtn" type="button" disabled=true name="name" value="" onclick="handleSearchPages('previous')">Previous Page</button>
+							<button class="btn btn-default" id="nextSearchPageBtn" type="button" name="name" value="" onclick="handleSearchPages('next')">Next Page</button>
 						</div>
 					</div>
 				</div>

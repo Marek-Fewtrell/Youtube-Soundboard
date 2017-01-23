@@ -12,7 +12,7 @@ function getSheet() {
       spreadsheetId: SPREADSHEET_ID,
       range: 'Sheet1!A2:B'
     }).then(function(response) {
-    $("#savedVideosError").addClass("hidden");
+    	$("#savedVideosError").addClass("hidden");
     	console.log(response);
     	//TODO: replace this with a function call to separate logic.
     	savedVideosCollection = [];
@@ -31,7 +31,7 @@ function getSheet() {
 		  		//addToTable(videoObject["name"], videoObject["url"], videoObject["rowNumber"]);
 		  	}
 		  	populateTable();
-		  	//visualFeedback(message, status);
+		  	visualFeedback("Successfully loaded the sheet.", true);
     	} else {
     		$("#savedVideosInfo").text('No data in table');
     		$("#savedVideosInfo").removeClass("hidden");
@@ -51,6 +51,7 @@ function getSheet() {
   		} else if (response.status == 401) {
   			console.log("error code 401");
   			$("#savedVideosError").text(response.result.error.message);
+  			checkAuth();
   		} else if (response.status == 403) {
   			switch(response.result.error.errors[0].reason) {
   				case "dailyLimitExceeded":
@@ -88,15 +89,16 @@ function getSheet() {
  * status - Success is true.
  */
 function visualFeedback(message, status) {
-  var vfelement = $("#visualFeedback");
-  vfelement.innerHTML = message;
+	console.log("visualFeedback function");
+  var $vfelement = $("#visualFeedback");
+  $vfelement.text(message);
   if (status) {
-    vfelement.className = "visualFeedbackSuccess";
+    $vfelement.addClass("visualFeedbackSuccess");
     setTimeout(function() {
-      vfelement.className += " visualFeedbackDisappear";
+      $vfelement.addClass("visualFeedbackDisappear");
     }, 5000);
   } else {
-    vfelement.className = "visualFeedbackFailure";
+    $vfelement.addClass("visualFeedbackFailure");
   }
 }
 
@@ -263,7 +265,7 @@ function deleteRow(rownumber) {
     range: therange
   }).then(function(response) {
   	$("#createEditModalError").addClass("hidden");
-    //visualFeedback("Successfully deleted client.", true);
+    visualFeedback("Successfully deleted client.", true);
     //Remove that item from the collection
     removeSingleVideo(rownumber);
     //Redisplay the table then.

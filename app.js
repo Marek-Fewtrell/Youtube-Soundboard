@@ -42,8 +42,8 @@ $(document).ready(function() {
 	});
 	
 	$("#search-container").on("click", ".btnAddSearch", function () {
-		//Maybe use this to replace the onclick event on the buttons for each search item.
 		var searchItem = searchCollection[$(this).val()];
+		changeModalAction("create");
 		addVideoSearchAction(searchItem.videoTitle, searchItem.videoId);
 	});
 	
@@ -73,18 +73,6 @@ $(document).ready(function() {
 	});
 	
 });
-
-function nextPageSearch() {
-	search(nextSearchPageToken);
-}
-
-function previousPageSearch() {
-	search(previousSearchPageToken);
-}
-
-function nextSpreadsheetSearch() {
-	getSpreadsheetID(spreadsheetSearchNextPageToken);
-}
   
 function addVideoURLAction() {
 	var url = $("#urlInput").val();

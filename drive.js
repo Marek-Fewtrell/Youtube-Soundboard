@@ -60,9 +60,11 @@ function getSpreadsheetID(pageToken) {
     	if (reason.status == 400) {
   			console.log("error code 400");
   			$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
+  			//Bad Request, either try again or refresh the page.
   		} else if (reason.status == 401) {
   			console.log("error code 401");
   			$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
+  			
   		} else if (reason.status == 403) {
   			switch(reason.result.error.errors[0].reason) {
   				case "dailyLimitExceeded":

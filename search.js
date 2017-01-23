@@ -13,7 +13,11 @@ function handleSearchAPILoaded() {
 	//gapi.client.load(discoveryUrl).then(checkAuth);
 }
 
+var maxResultsDisplay = 5;
 var searchCollection = [];
+var searchNextPageToken = "";
+var searchCurrentPage = 0;
+var searchTotalPages = 0;
 
 function search(pageToken) {
 	if (pageToken === undefined) {
@@ -29,7 +33,7 @@ function search(pageToken) {
 	}).then(function(response) {
 		$("#searchError").text("");
 		$("#search-container").empty();
-		searchCollection = [];
+		//searchCollection = [];
 		
 		var results = response.result;
 		nextSearchPageToken = (results.nextPageToken !== undefined) ? results.nextPageToken : "";
@@ -63,28 +67,24 @@ function search(pageToken) {
 			};
 			
 			searchCollection.push(searchItem);
-			
-			var $img = $("<img/>").addClass("media-object").attr("src", item.snippet.thumbnails.default.url).attr("alt", "Video Thumbnail").attr("width", item.snippet.thumbnails.default.width).attr("height", item.snippet.thumbnails.default.height);
-			var $imgContainer = $("<div/>").addClass("media-left media-middle").append($img);
-			
-			
-			var $titleHeader = $("<h4>").addClass("media-heading").text(item.snippet.title);
-			var $span = $("<span>").append($("<a>").attr("href", "https://www.youtube.com/channel/" + item.snippet.channelId).attr("target", "_blank").text(item.snippet.channelTitle))
-			
-			var $previewBtn = $("<button/>").addClass("btn btn-default btn-info previewVidBtn").attr("value", item.id.videoId).text("Preview Video");
-			var $addVideoBtn = $("<button/>").addClass("btn btn-default btn-success btnAddSearch").attr("value", index).text("Add Video");
-			var $viewLink = $("<a>").addClass("btn btn-default").attr("target", "_blank").attr("href", "https://www.youtube.com/watch?v=" + item.id.videoId).text("View on Youtube");
-	
-			var $divContainer = $("<div/>").addClass("btn-group").append($previewBtn, $addVideoBtn, $viewLink);
-			
-			
-			var $body = $("<div>").addClass("media-body").append($titleHeader, $span, $("<br>"), $divContainer);
-			
-			var $mainContainer = $("<div/>").addClass("media").append($imgContainer, $body);
-			
-			$("#search-container").append($mainContainer);
-			
+			searchPopulateItem(searchItem);
 		});
+		
+		var totalPages = searchCollection.length / maxResultsDisplay;
+    if ((searchCollection.length % maxResultsDisplay) > 0 ) {
+    	totalPages++;
+    }
+    
+    searchTotalPages = totalPages;
+    
+    searchNextPageToken = (response.result.nextPageToken != undefined) ? response.result.nextPageToken : "";
+    
+    if (response.result.nextPageToken != undefined) {
+    	$("#nextSearchPageBtn").prop("disabled", false);
+    } else {
+    	$("#nextSearchPageBtn").prop("disabled", true);
+    }
+		    
 	}, function(response) {
 		console.log("Search error");
 		console.log(response);
@@ -121,5 +121,65 @@ function search(pageToken) {
   		}
 	});
 }
+
+function searchPopulateItem(item) {
+	var $img = $("<img/>").addClass("media-object").attr("src", item.thumbnail.thumbnailUrl).attr("alt", "Video Thumbnail").attr("width", item.thumbnail.thumbnailWidth).attr("height", item.thumbnail.thumbnailHeight);
+	var $imgContainer = $("<div/>").addClass("media-left media-middle").append($img);
+	
+	
+	var $titleHeader = $("<h4>").addClass("media-heading").text(item.videoTitle);
+	var $span = $("<span>").append($("<a>").attr("href", "https://www.youtube.com/channel/" + item.channelId).attr("target", "_blank").text(item.channelTitle))
+	
+	var $previewBtn = $("<button/>").addClass("btn btn-default btn-info previewVidBtn").attr("value", item.videoId).text("Preview Video");
+	var $addVideoBtn = $("<button/>").addClass("btn btn-default btn-success btnAddSearch").attr("value", item.id).text("Add Video");
+	var $viewLink = $("<a>").addClass("btn btn-default").attr("target", "_blank").attr("href", "https://www.youtube.com/watch?v=" + item.videoId).text("View on Youtube");
+
+	var $divContainer = $("<div/>").addClass("btn-group").append($previewBtn, $addVideoBtn, $viewLink);
+	
+	
+	var $body = $("<div>").addClass("media-body").append($titleHeader, $span, $("<br>"), $divContainer);
+	
+	var $mainContainer = $("<div/>").addClass("media").append($imgContainer, $body);
+	
+	$("#search-container").append($mainContainer);
+}
+
+function handleSearchPages(action) {
+	
+	if (action == "next" ) {
+		searchCurrentPage++;
+	} else if (action == "previous") {
+		searchCurrentPage--;
+	}
+
+	var startIndex = searchCurrentPage * maxResultsDisplay;
+	var endIndex = ((startIndex+maxResultsDisplay) > searchCollection.length) ? searchCollection.length : startIndex+maxResultsDisplay;
+	
+
+	if (searchNextPageToken == "" && searchCurrentPage + 1 > searchTotalPages-1) {
+		$("#nextSearchPageBtn").prop("disabled", true);
+	} else {
+		$("#nextSearchPageBtn").prop("disabled", false);
+	}
+
+	if (searchCurrentPage - 1 < 0) {
+		$("#previosSearchPageBtn").prop("disabled", true);
+	} else {
+		$("#previosSearchPageBtn").prop("disabled", false);
+	}
+
+	$("#search-container").empty();
+	for (var i = startIndex; i < endIndex; i++) {
+		searchPopulateItem(searchCollection[i]);
+	}
+	
+	if (searchNextPageToken != "" && startIndex >= searchCollection.length) {
+		search(searchNextPageToken);
+		$("#previosSearchPageBtn").prop("disabled", false);
+		return;
+	}
+	
+}
+
 
 
