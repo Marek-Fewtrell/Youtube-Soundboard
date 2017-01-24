@@ -57,6 +57,9 @@ function getSpreadsheetID(pageToken) {
 		  }
 
     }, function(reason) {
+    	
+    	errorHandling(reason);
+    
     	if (reason.status == 400) {
   			console.log("error code 400");
   			$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
