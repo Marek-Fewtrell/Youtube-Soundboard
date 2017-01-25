@@ -7,7 +7,7 @@ var savedVideosCollection = [];
  *
 */
 function getSheet() {
-	setMessage("Loading data, please wait");
+	setInfoMessage("Loading data, please wait");
   gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: SPREADSHEET_ID,
       range: 'Sheet1!A2:B'
@@ -19,38 +19,36 @@ function getSheet() {
     	
     	var results = response.result;
     	if (results.values != undefined && results.values.length > 0) {
-    		$("#savedVideosInfo").addClass("hidden");
-    	
 		  	for (var i = 0; i < results.values.length; i++) {
 		  		var name = (results.values[i][0] === undefined) ? "" : results.values[i][0];
 		  		var url = (results.values[i][1] === undefined) ? "" : results.values[i][1];
 		  		
 		  		var videoObject = {"name": name, "url" : url, "rowNumber": 2+i};
 		  		savedVideosCollection.push(videoObject);
-		  		
-		  		//addToTable(videoObject["name"], videoObject["url"], videoObject["rowNumber"]);
 		  	}
 		  	populateTable();
 		  	visualFeedback("Successfully loaded the sheet.", true);
+		  	$("#savedVideosInfo").hide();
     	} else {
     		$("#savedVideosInfo").text('No data in table');
-    		$("#savedVideosInfo").removeClass("hidden");
     		populateTable();
     	}
-			setMessage(" ");
-			
 			$("#refreshSavedVideosBtn").removeClass("disabled");
 			
   }, function(response) {
-    setMessage('Error: ' + response.result.error.message);
+    //setErrorMessage('Error: ' + response.result.error.message);
     console.log(response);
-    $("#savedVideosError").removeClass("hidden");
+    $("#savedVideosInfo").hide();
+    $("#savedVideosError").show();
     if (response.status == 400) {
   			console.log("error code 400");
   			$("#savedVideosError").text(response.result.error.message);
   		} else if (response.status == 401) {
   			console.log("error code 401");
   			$("#savedVideosError").text(response.result.error.message);
+  			//Reauthorise this.
+  			//Clear the table, and populate it again.
+  			//The spreadsheet will have already been selected.
   			checkAuth();
   		} else if (response.status == 403) {
   			switch(response.result.error.errors[0].reason) {
@@ -92,10 +90,11 @@ function visualFeedback(message, status) {
 	console.log("visualFeedback function");
   var $vfelement = $("#visualFeedback");
   $vfelement.text(message);
+  $vfelement.show();
   if (status) {
     $vfelement.addClass("visualFeedbackSuccess");
     setTimeout(function() {
-      $vfelement.addClass("visualFeedbackDisappear");
+      $vfelement.fadeOut(1000);
     }, 5000);
   } else {
     $vfelement.addClass("visualFeedbackFailure");
@@ -109,8 +108,14 @@ function visualFeedback(message, status) {
  * Params:
  * message - message to be displayed.
  */
-function setMessage(message) {
-	$('#statusMessages').text(message);
+function setInfoMessage(message) {
+	$("#savedVideosInfo").show();
+	$('#savedVideosInfo').text(message);
+}
+
+function setErrorMessage(message) {
+	$("#savedVideosError").removeClass("hidden");
+	$('#savedVideosError').text(message);
 }
 
 
@@ -122,7 +127,7 @@ function setMessage(message) {
  *
 */
 function createRow() {
-	//setModalMessage("Creating new client row.");
+	setInfoMessage("Creating new row.");
   gapi.client.sheets.spreadsheets.values.append({
     spreadsheetId: SPREADSHEET_ID,
     range: "Sheet1",
@@ -135,10 +140,10 @@ function createRow() {
         ]
       ]
   }).then(function(response) {
-	  $("#createEditModalError").addClass("hidden");
+	  $("#createEditModalError").hide();
     closeModal();
-    visualFeedback("Successfully created .", true);
-
+    visualFeedback("Successfully created.", true);
+		$("#savedVideosInfo").hide();
     //Create a new object in the collection and upated the table.
     //No need to make a new request.
     var results = response.result;
@@ -146,12 +151,14 @@ function createRow() {
     
     addSingleVideo($("#videoNameInput").val(), $("#urlInput").val(), updatedRange);
     
-    addToTable($("#videoNameInput").val(), $("#urlInput").val(), updatedRange);
+    populateTable();
+    
   }, function(response) {
-    visualFeedback("Unsuccessfully created client.", true);
+    //visualFeedback("Unsuccessfully created.", false);
+    $("#createEditModalError").show();
+    $("#createEditModalError").text("Was unsuccessful.");
     console.log("CreateRow function failure");
     console.log(response);
-    $("#createEditModalError").removeClass("hidden");
     if (response.status == 400) {
   			console.log("error code 400");
   			$("#createEditModalError").text(response.result.error.message);
@@ -192,7 +199,7 @@ function createRow() {
  *
 */
 function updateRow(rownumber, newName, newUrl) {
-	//setModalMessage("Updating client row.");
+	setInfoMessage("Updating row.");
   var therange = 'Sheet1!A' + rownumber + ':B' + rownumber;
   gapi.client.sheets.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
@@ -215,10 +222,12 @@ function updateRow(rownumber, newName, newUrl) {
 		updateSingleVideo(rownumber, newName, newUrl);
 		populateTable();
     closeModal();
-    visualFeedback("Successfully updated client.", true);
+    visualFeedback("Successfully updated.", true);
+    $("#savedVideosInfo").hide();
   }, function(response) {
-    visualFeedback("Unsuccessfully updated client.", false);
-    $("#createEditModalError").removeClass("hidden");
+    visualFeedback("Unsuccessfully updated.", false);
+    $("#createEditModalError").show();
+    $("#createEditModalError").text("Was unsuccessful.");
     if (response.status == 400) {
   			console.log("error code 400");
   			$("#createEditModalError").text(response.result.error.message);
@@ -259,23 +268,22 @@ function updateRow(rownumber, newName, newUrl) {
  *
 */
 function deleteRow(rownumber) {
+	setInfoMessage("Deleting row.");
   var therange = 'Sheet1!A' + rownumber + ':B' + rownumber;
   gapi.client.sheets.spreadsheets.values.clear({
     spreadsheetId: SPREADSHEET_ID,
     range: therange
   }).then(function(response) {
-  	$("#createEditModalError").addClass("hidden");
-    visualFeedback("Successfully deleted client.", true);
+    visualFeedback("Successfully deleted.", true);
     //Remove that item from the collection
     removeSingleVideo(rownumber);
     //Redisplay the table then.
     populateTable();
+    $("#savedVideosInfo").hide();
   }, function(response) {
 		console.log("deleteRow failure");
 		console.log(response);
-    visualFeedback("Unsuccessfully deleted client.", false);
-    
-    $("#createEditModalError").removeClass("hidden");
+    visualFeedback("Unsuccessfully deleted.", false);
     if (response.status == 400) {
   			console.log("error code 400");
   			$("#createEditModalError").text(response.result.error.message);

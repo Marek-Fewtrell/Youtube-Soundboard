@@ -10,19 +10,18 @@
 	<body>
 		<div class="container-fluid text-center">
 			<div>
-				<h2>Youtube Soundboard <button class="btn btn-default glyphicon glyphicon-cog" data-toggle="modal" data-target="#myModal2"></button></h2>
+				<h2>Youtube Soundboard <button id="appSettings" class="btn btn-default glyphicon glyphicon-cog" disabled=true title="Show Application Settings" data-toggle="modal" data-target="#myModal2"></button></h2>
 			</div>
 			
 			<div id="authorize-div" style="display: none">
-		    <span>Authorize access to Google Sheets API</span>
+		    <span>Authorize access to Google Account</span>
 		    <!--Button for the user to click to initiate auth sequence -->
 		    <button id="authorize-button" onclick="handleAuthClick(event)">
 		      Authorize
 		    </button>
 		  </div>
-			
-			<span id="statusMessages"></span>
-			<span id="visualFeedback"></span>
+		  
+		  <span id="statusMessages"></span>
 			
 			<div class="row">
 				<div class="col-md-6">
@@ -32,9 +31,11 @@
 						</div>
 						<br />
 						<div class="btn-group">
-							<button class="btn btn-default" name="playVideoBtn" value="Play" onclick="playVideo()"><span class="glyphicon glyphicon-play"></span></button>
-							<button class="btn btn-default glyphicon glypicon-pause" type="button" name="pauseVideoBtn" value="Pause" onclick="pauseVideo()"><span class="glyphicon glyphicon-pause"></button>
-							<button class="btn btn-default glyphicon glypicon-stop" type="button" name="stopVideoBtn" value="Stop" onclick="stopVideo()"><span class="glyphicon glyphicon-stop"></button>
+							<button class="btn btn-default glyphicon glyphicon-play" name="playVideoBtn" value="Play" onclick="playVideo()"></button>
+							<button class="btn btn-default glyphicon glyphicon-pause" name="pauseVideoBtn" value="Pause" onclick="pauseVideo()"></button>
+							<button class="btn btn-default glyphicon glyphicon-stop" name="stopVideoBtn" value="Stop" onclick="stopVideo()"></button>
+							<button class="btn btn-default glyphicon glyphicon-repeat" id="loopVideoBtn" value="Loop" onclick="" data-toggle="button"></button>
+							
 						</div>
 					</div>
 				
@@ -62,12 +63,17 @@
 			
 				<div class="col-md-6">
 					<div class="well well-sm">
-						<h3>Saved Videos</h3>
-						<button type="button" id="refreshSavedVideosBtn" value="" onclick="refreshSavedVideoTable()" class="btn btn-default glyphicon glyphicon-refresh disabled" ></button>
-						<button type="button" id="newSavedVideoBtn" value="" onclick="" data-toggle="modal" data-target="#myModal" class="btn btn-default">New Video</button>
-						<span class="hidden label label-info" id="savedVideosInfo"></span>
-						<span class="hidden label label-danger" id="savedVideosError"></span>
-						<div class="table-responsive">
+						<div>
+							<h3>
+								<button id="newSavedVideoBtn" disabled="true" data-toggle="modal" data-target="#myModal" class="btn btn-default glyphicon glyphicon-plus"></button>
+								Saved Videos
+								<button id="refreshSavedVideosBtn" disabled="true" onclick="refreshSavedVideoTable()" title="Refresh Videos" class="btn btn-default glyphicon glyphicon-refresh" ></button>
+							</h3>
+						</div>	
+						<div id="visualFeedback"></div>
+						<span class="label label-info" id="savedVideosInfo"></span>
+						<span class="label label-danger" id="savedVideosError"></span>
+						<div class="table-responsive clearfix">
 							<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="text-center table table-striped table-bordered table-condensed">
 								<tr>
 									<th>Video Name</th>
@@ -100,8 +106,6 @@
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 							<button type="button" class="btn btn-success" id="modalApplyBtn" onclick="">Apply</button>
-							<!--<button class="btn btn-default" type="button" name="urlInputButton" disabled value="Add Video" onclick="addVideoURLAction()">Add Video</button>
-							<button class="btn btn-default" type="button" name="urlInputButton" disabled value="Update Video" onclick="updateVideoAction()">Update Video</button>-->
 						</div>
 					</div>
 				</div>
@@ -137,7 +141,6 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-success" id="" onclick="">Apply</button>
 						</div>
 					</div>
 				</div>

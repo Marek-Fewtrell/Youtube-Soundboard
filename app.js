@@ -4,6 +4,8 @@ var player;
 var nextSearchPageToken = "";
 var previousSearchPageToken = "";
 
+var loopVideoBool = false;
+
 $(document).ready(function() {
 	initialisePlayer();
 
@@ -58,10 +60,21 @@ $(document).ready(function() {
 		$(this).addClass("active");
 		$("#myModal2").modal("hide");
 		getSheet();
+		
+		$("#newSavedVideoBtn").attr("disabled", false);
+		$("#refreshSavedVideosBtn").attr("disabled", false);
 	});
 	
 	$("#myModal").on('show.bs.modal', function () {
 		$("#createEditModalError").addClass("hidden");
+	});
+	
+	$("#loopVideoBtn").on("click", function (event) {
+		if (loopVideoBool) {
+			loopVideoBool = false;
+		} else {
+			loopVideoBool = true;
+		}
 	});
 	
 	//Enables the Enter Key to be used in the search bar to trigger the search functionality.
@@ -73,7 +86,7 @@ $(document).ready(function() {
 	});
 	
 });
-  
+
 function addVideoURLAction() {
 	var url = $("#urlInput").val();
 	var name = $("#videoNameInput").val();
@@ -252,11 +265,11 @@ function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '390',
     width: '640',
-    videoId: 'dv13gl0a-FA'/*,
+    videoId: 'dv13gl0a-FA',
     events: {
-      'onReady': onPlayerReady,
+      //'onReady': onPlayerReady,
       'onStateChange': onPlayerStateChange
-    }*/
+    }
   });
 }
 
@@ -266,13 +279,12 @@ function onPlayerReady(event) {
 }
 
 // 5. The API calls this function when the player's state changes.
-//    The function indicates that when playing a video (state=1),
-//    the player should play for six seconds and then stop.
 var done = false;
 function onPlayerStateChange(event) {
-  if (event.data == YT.PlayerState.PLAYING && !done) {
-    setTimeout(stopVideo, 6000);
-    done = true;
+	//console.log(event);
+	//This starts playing a video after pressing the stop button.
+  if (loopVideoBool == true && event.data == YT.PlayerState.CUED) {
+  	playVideo();
   }
 }
 

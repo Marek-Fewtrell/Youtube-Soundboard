@@ -27,7 +27,7 @@ function handleAuthResult(authResult) {
   	//Authorization was successful.
     // Hide auth UI
     authorizeDiv.css("display", 'none');
-    //getSheet();
+    $("#appSettings").attr("disabled", false);
     getSpreadsheetID();
   } else {
     // Show auth UI, allowing the user to initiate authorization by

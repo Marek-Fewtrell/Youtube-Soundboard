@@ -21,7 +21,7 @@ function getSpreadsheetID(pageToken) {
     	$("#retrievespreadsheetIdError").text("");
 	    var files = resp.result.files;
 	    $("#fileSelector").empty();
-
+    
 		  if (files && files.length > 0) {
 		    for (var i = 0; i < files.length; i++) {
 		      var file = files[i];
