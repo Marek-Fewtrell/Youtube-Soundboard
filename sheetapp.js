@@ -40,41 +40,14 @@ function getSheet() {
     console.log(response);
     $("#savedVideosInfo").hide();
     $("#savedVideosError").show();
-    if (response.status == 400) {
-  			console.log("error code 400");
-  			$("#savedVideosError").text(response.result.error.message);
-  		} else if (response.status == 401) {
-  			console.log("error code 401");
-  			$("#savedVideosError").text(response.result.error.message);
-  			//Reauthorise this.
-  			//Clear the table, and populate it again.
-  			//The spreadsheet will have already been selected.
-  			checkAuth();
-  		} else if (response.status == 403) {
-  			switch(response.result.error.errors[0].reason) {
-  				case "dailyLimitExceeded":
-  				case "userRateLimitExceeded":
-  				case "rateLimitExceeded":
-  				case "sharingRateLimitExceeded":
-  					$("#savedVideosError").text(response.result.error.message);
-  					break;
-  				case "appNotAuthorizedToFile":
-  					$("#savedVideosError").text(response.result.error.message);
-  					break;
-  				case "insufficientFilePermissions":
-  					$("#savedVideosError").text(response.result.error.message);
-  					break;
-  				case "domainPolicy":
-  					$("#savedVideosError").text("Cannot be used with user's domain");
-  					break;
-  				default: 
-  					$("#savedVideosError").text("The function has failed to do something correctly");
-  			}
-  		} else if (response.status == 404) {
-  			$("#savedVideosError").text(response.result.error.message);
-  		} else if (response.status == 500) {
-  			$("#savedVideosError").text("An unexpected error occured.");
-  		}
+    $("#savedVideosError").text("Some error happened");
+    /*
+			401 error
+			Reauthorise this.
+			Clear the table, and populate it again.
+			The spreadsheet will have already been selected
+		*/
+		errorHandling(response);
   });
 }
 
@@ -159,37 +132,8 @@ function createRow() {
     $("#createEditModalError").text("Was unsuccessful.");
     console.log("CreateRow function failure");
     console.log(response);
-    if (response.status == 400) {
-  			console.log("error code 400");
-  			$("#createEditModalError").text(response.result.error.message);
-  		} else if (response.status == 401) {
-  			console.log("error code 401");
-  			$("#createEditModalError").text(response.result.error.message);
-  		} else if (response.status == 403) {
-  			switch(response.result.error.errors[0].reason) {
-  				case "dailyLimitExceeded":
-  				case "userRateLimitExceeded":
-  				case "rateLimitExceeded":
-  				case "sharingRateLimitExceeded":
-  					$("#createEditModalError").text(response.result.error.message);
-  					break;
-  				case "appNotAuthorizedToFile":
-  					$("#createEditModalError").text(response.result.error.message);
-  					break;
-  				case "insufficientFilePermissions":
-  					$("#createEditModalError").text(response.result.error.message);
-  					break;
-  				case "domainPolicy":
-  					$("#createEditModalError").text("Cannot be used with user's domain");
-  					break;
-  				default: 
-  					$("#createEditModalError").text("The function has failed to do something correctly");
-  			}
-  		} else if (response.status == 404) {
-  			$("#createEditModalError").text(response.result.error.message);
-  		} else if (response.status == 500) {
-  			$("#createEditModalError").text("An unexpected error occured.");
-  		}
+    //createEditModalError
+    errorHandling(response);
   });
 }
 
@@ -217,7 +161,6 @@ function updateRow(rownumber, newName, newUrl) {
 		Check the repsonse for correct number of updates.
 		if (response.result.updatedCells === 4) {}
 		*/
-    //debuggingText(response);
 		$("#createEditModalError").addClass("hidden");
 		updateSingleVideo(rownumber, newName, newUrl);
 		populateTable();
@@ -228,37 +171,8 @@ function updateRow(rownumber, newName, newUrl) {
     visualFeedback("Unsuccessfully updated.", false);
     $("#createEditModalError").show();
     $("#createEditModalError").text("Was unsuccessful.");
-    if (response.status == 400) {
-  			console.log("error code 400");
-  			$("#createEditModalError").text(response.result.error.message);
-  		} else if (response.status == 401) {
-  			console.log("error code 401");
-  			$("#createEditModalError").text(response.result.error.message);
-  		} else if (response.status == 403) {
-  			switch(response.result.error.errors[0].reason) {
-  				case "dailyLimitExceeded":
-  				case "userRateLimitExceeded":
-  				case "rateLimitExceeded":
-  				case "sharingRateLimitExceeded":
-  					$("#createEditModalError").text(response.result.error.message);
-  					break;
-  				case "appNotAuthorizedToFile":
-  					$("#createEditModalError").text(response.result.error.message);
-  					break;
-  				case "insufficientFilePermissions":
-  					$("#createEditModalError").text(response.result.error.message);
-  					break;
-  				case "domainPolicy":
-  					$("#createEditModalError").text("Cannot be used with user's domain");
-  					break;
-  				default: 
-  					$("#createEditModalError").text("The function has failed to do something correctly");
-  			}
-  		} else if (response.status == 404) {
-  			$("#createEditModalError").text(response.result.error.message);
-  		} else if (response.status == 500) {
-  			$("#createEditModalError").text("An unexpected error occured.");
-  		}
+    //createEditModalError
+    errorHandling(response);
   });
 }
 
@@ -284,36 +198,8 @@ function deleteRow(rownumber) {
 		console.log("deleteRow failure");
 		console.log(response);
     visualFeedback("Unsuccessfully deleted.", false);
-    if (response.status == 400) {
-  			console.log("error code 400");
-  			$("#createEditModalError").text(response.result.error.message);
-  		} else if (response.status == 401) {
-  			console.log("error code 401");
-  			$("#createEditModalError").text(response.result.error.message);
-  		} else if (response.status == 403) {
-  			switch(response.result.error.errors[0].reason) {
-  				case "dailyLimitExceeded":
-  				case "userRateLimitExceeded":
-  				case "rateLimitExceeded":
-  				case "sharingRateLimitExceeded":
-  					$("#createEditModalError").text(response.result.error.message);
-  					break;
-  				case "appNotAuthorizedToFile":
-  					$("#createEditModalError").text(response.result.error.message);
-  					break;
-  				case "insufficientFilePermissions":
-  					$("#createEditModalError").text(response.result.error.message);
-  					break;
-  				case "domainPolicy":
-  					$("#createEditModalError").text("Cannot be used with user's domain");
-  					break;
-  				default: 
-  					$("#createEditModalError").text("The function has failed to do something correctly");
-  			}
-  		} else if (response.status == 404) {
-  			$("#createEditModalError").text(response.result.error.message);
-  		} else if (response.status == 500) {
-  			$("#createEditModalError").text("An unexpected error occured.");
-  		}
+    
+    //createEditModalError
+    errorHandling(response);
   });
 }

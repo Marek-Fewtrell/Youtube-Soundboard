@@ -2,21 +2,33 @@
 function errorHandling(response) {
 	console.log("in errorHandling");
 	console.log(response);
-	
+	var errorObject = {};
+	if (response.result.error.errors != undefined) {
+		errorObject.code = response.result.error.code;
+		errorObject.status = response.result.error.errors[0].reason;
+		errorObject.msg = response.result.error.errors[0].message;
+	} else {
+		errorObject.code = response.result.error.code;
+		errorObject.status = response.result.error.status;
+		errorObject.msg = response.result.error.message;
+	}
+	console.log("errorObject");
+	console.log(errorObject);
 	var errorMessage = "";
 	
-	if (response.status == 301) {
+	
+	if (errorObject.code == 301) {
 		errorMessage = "This stuff should be sent to a different url";
-	} else if (response.status == 303) {
+	} else if (errorObject.code == 303) {
 		errorMessage = "Request was success but need to redirect to a url";
-	} else if (response.status == 304) {
+	} else if (errorObject.code == 304) {
 		errorMessage = "Something complicated happened.";
-	} else if (response.status == 307) {
+	} else if (errorObject.code == 307) {
 		errorMessage = "Temporary redirect needed.";
-  } else if (response.status == 400) {
+  } else if (errorObject.code == 400) {
   	//Bad Request
   	console.log("error code 400");
-  	switch(response.result.error.reason) {
+  	switch(errorObject.status) {
   		case "badRequest":
   			errorMessage = "Request is invalid.";
 	  		break;
@@ -42,13 +54,14 @@ function errorHandling(response) {
 				errorMessage = "API is not recognised";
 				break;
 			default:
-				errorMessage = response.result.error.message;
+				errorMessage = errorObject.msg;
   	}
   	
-	} else if (response.status == 401) {
+	} else if (errorObject.code == 401) {
 		//Authorization
 		console.log("error code 401");
-		switch(response.result.error.reason) {
+		switch(errorObject.status) {
+			case "UNAUTHENTICATED":
   		case "unauthorized":
   			errorMessage = "User is not authorised to make the request.";
 				break;
@@ -68,12 +81,13 @@ function errorHandling(response) {
 				errorMessage = "An error related to authorisation has occured.";
   	}
 		
-	} else if (response.status == 402) {
+	} else if (errorObject.code == 402) {
 		errorMessage = "Money is required.";
-	} else if (response.status == 403) {
-		//Forbidden
-		switch(response.result.error.reason) {
-			case "Forbidden":
+	} else if (errorObject.code == 403) {
+	
+		switch(errorObject.status) {
+			case "PERMISSION_DENIED":
+			case "forbidden":
 				errorMessage = "Forbidden and cannot be completed.";
 				break;
 			case "accessNotConfigured":
@@ -124,40 +138,51 @@ function errorHandling(response) {
 			case "userRateLimitExceeded":
 				errorMessage = "Per-user rate limit reached.";
 				break;
+			case "domainPolicy":
+				$("#retrievespreadsheetIdError").text("Cannot be used with user's domain");
+				break;
+			case "appNotAuthorizedToFile":
+			case "sharingRateLimitExceeded":
+			case "insufficientFilePermissions":
+			
+			//Search api
+			case "accountDelegationForbidden":
+			case "authenticatedUserAccountClosed":
+				
 			default: 
-				errorMessage = response.result.error.message;
+				errorMessage = errorObject.msg;
 		}
 	
-	} else if (response.status == 404) {
+	} else if (errorObject.code == 404) {
 		//Not Found
 		errorMessage = "Could not be found.";
 	
-	} else if (response.status == 405) {
+	} else if (errorObject.code == 405) {
 		errorMessage = "The HTTP method associated with the request is not supported.";
-	} else if (response.status == 409) {
+	} else if (errorObject.code == 409) {
 		errorMessage = "Conflict with existing item, could already exist.";
-	} else if (response.status == 410) {
+	} else if (errorObject.code == 410) {
 		errorMessage = "The request failed because the resource associated with the request has been deleted.";
-	} else if (response.status == 412) {
+	} else if (errorObject.code == 412) {
 		errorMessage = "Something complicated happened.";
-	} else if (response.status == 413) {
+	} else if (errorObject.code == 413) {
 		errorMessage = "The request is too large.";
-	} else if (response.status == 416) {
+	} else if (errorObject.code == 416) {
 		errorMessage = "The request specified a range that cannot be satisfied.";
-	} else if (response.status == 417) {
+	} else if (errorObject.code == 417) {
 		errorMessage = "A client expectation cannot be met by the server.";
-	} else if (response.status == 428) {
+	} else if (errorObject.code == 428) {
 		errorMessage = "Something complicated happened.";
-	} else if (response.status == 429) {
+	} else if (errorObject.code == 429) {
 		errorMessage = "Too many requests have been sent within a given time period.";
-	} else if (response.status == 500) {
+	} else if (errorObject.code == 500) {
 		//Internal Error
 		errorMessage = "An unexpected internal error occured.";
-	} else if (response.status == 501) {
+	} else if (errorObject.code == 501) {
 		errorMessage = "Tried to execute an unknown method or operation.";
-	} else if (response.status == 503) {
+	} else if (errorObject.code == 503) {
 		//Service Unavailable
-		switch (response.result.error.reason) {
+		switch (errorObject.status) {
 			case "backendError":
 			case "backendNotConnected":
 			case "notReady":
@@ -177,12 +202,46 @@ function errorHandling(response) {
 	AUth?
 */
 /*
-case "dailyLimitExceeded":
-case "userRateLimitExceeded":
-case "rateLimitExceeded":
-case "sharingRateLimitExceeded":
-case "appNotAuthorizedToFile":
-case "insufficientFilePermissions":
+	drive api
+	result.status 401
+	result.error.code 401
+	result.error.status UNAUTHENTICATED
+*/
+/*
+	When selecting a different spreadsheet to use.
+	result.error.code 403
+	result.error.status PERMISSION_DENIED
+*/
+/*
+	When going to the next page of the existing spreadsheet files.
+	result.error.code 403
+	result.error.errors[0].domain global
+	result.error.errors[0].reason insufficientFilePermissions
+*/
+/*
+	When creating a new spreadsheet, after session timeout.
+	result.error.code 401
+	result.error.status UNAUTHENTICATED
+*/
+/*
+	When refreshing the spreadsheet
+	result.error.code 403
+	result.error.status PERMISSION_DENIED
+*/
+/*
+	When creating a new row in a spreadsheet, after session timeout.
+	result.error.code 401
+	result.error.status UNAUTHENTICATED
+*/
+/*
+	When updating a row in a spreadsheet, after session timeout.
+	result.error.code 401
+	result.error.status UNAUTHENTICATED
+*/
+/*
+	When deleting a row in a spreadsheet, after session timeout.
+	result.error.code 401
+	result.error.status UNAUTHENTICATED
 */
 
 function APIDomainErrorHandling(reponse, domain) {

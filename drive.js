@@ -56,43 +56,9 @@ function getSpreadsheetID(pageToken) {
 		  	$("#myModal2").modal("show");
 		  }
 
-    }, function(reason) {
-    	
-    	errorHandling(reason);
-    
-    	if (reason.status == 400) {
-  			console.log("error code 400");
-  			$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
-  			//Bad Request, either try again or refresh the page.
-  		} else if (reason.status == 401) {
-  			console.log("error code 401");
-  			$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
-  			
-  		} else if (reason.status == 403) {
-  			switch(reason.result.error.errors[0].reason) {
-  				case "dailyLimitExceeded":
-  				case "userRateLimitExceeded":
-  				case "rateLimitExceeded":
-  				case "sharingRateLimitExceeded":
-  					$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
-  					break;
-  				case "appNotAuthorizedToFile":
-  					$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
-  					break;
-  				case "insufficientFilePermissions":
-  					$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
-  					break;
-  				case "domainPolicy":
-  					$("#retrievespreadsheetIdError").text("Cannot be used with user's domain");
-  					break;
-  				default: 
-  					$("#retrievespreadsheetIdError").text("The function has failed to do something correctly");
-  			}
-  		} else if (reason.status == 404) {
-  			$("#retrievespreadsheetIdError").text(reason.result.error.errors[0].message);
-  		} else if (reason.status == 500) {
-  			$("#retrievespreadsheetIdError").text("An unexpected error occured.");
-  		}
+    }, function(resposne) {
+    	errorHandling(resposne);
+    	//#retrievespreadsheetIdError
     });
 }
 
@@ -191,37 +157,8 @@ function createSheet() {
 			var $item = $("<button>").text(result.properties.title + "(New)").addClass("list-group-item spreadSheetIDBtn").val(result.spreadsheetId);
 			$("#fileSelector").prepend($item);
 			
-  }, function(reason) {
-  	console.log(reason);
-    if (reason.status == 400) {
-  			console.log("error code 400");
-  			$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
-  		} else if (reason.status == 401) {
-  			$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
-  		} else if (reason.status == 403) {
-  			switch(reason.result.error.errors.reason) {
-  				case "dailyLimitExceeded":
-  				case "userRateLimitExceeded":
-  				case "rateLimitExceeded":
-  				case "sharingRateLimitExceeded":
-  					$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
-  					break;
-  				case "appNotAuthorizedToFile":
-  					$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
-  					break;
-  				case "insufficientFilePermissions":
-  					$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
-  					break;
-  				case "domainPolicy":
-  					$("#retrievespreadsheetIdErrorCreate").text("Cannot be used with user's domain");
-  					break;
-  				default: 
-  					$("#retrievespreadsheetIdErrorCreate").text("The function has failed to do something correctly");
-  			}
-  		} else if (reason.status == 404) {
-  			$("#retrievespreadsheetIdErrorCreate").text(reason.result.error.message);
-  		} else if (reason.status == 500) {
-  			$("#retrievespreadsheetIdErrorCreate").text("An unexpected error occured.");
-  		}
+  }, function(response) {
+  	errorHandling(response);
+  	//#retrievespreadsheetIdErrorCreate
   });
 }
