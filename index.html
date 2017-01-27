@@ -43,7 +43,12 @@
 						<div>
 							<h3>Search</h3>
 							<div class="input-group">
-								<span class="label label-danger" id="searchError"></span>
+								<div class="bg-danger hidden" id="searchError">
+									Error:
+									<span id="searchErrorMessage"></span>
+									<a class="bg-info" href="#">Error Details</a>
+								</div>
+						
 								<input type="text" class="form-control" placeholder="search" id="query" />
 								<div class="input-group-btn">
 									<button id="btnQuery" type="button" class="btn btn-default btn-primary" onclick="search()">
@@ -72,7 +77,11 @@
 						</div>	
 						<div id="visualFeedback"></div>
 						<span class="label label-info" id="savedVideosInfo"></span>
-						<span class="label label-danger" id="savedVideosError"></span>
+						<div class="bg-danger hidden" id="savedVideosError">
+							Error:
+							<span id="savedVideosErrorMessage"></span>
+							<a class="bg-info" href="#">Error Details</a>
+						</div>
 						<div class="table-responsive clearfix">
 							<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="text-center table table-striped table-bordered table-condensed">
 								<tr>
@@ -97,7 +106,12 @@
 							<h4 class="modal-title"><span id="modalTitle" class="text-capitalize">Create/Edit</span> Saved Video</h4>
 						</div>
 						<div class="modal-body">
-							<span class="label label-danger hidden" id="createEditModalError"></span>
+							<div class="bg-danger hidden" id="createEditModalError">
+								Error:
+								<span id="createEditModalErrorMessage"></span>
+								<a class="bg-info" href="#">Error Details</a>
+							</div>
+							
 							<input type="hidden" id="videoRowNumberHolder" />
 							<input class="form-control" type="text" name="videoNameInput" value="" placeholder="Video Name" id="videoNameInput" />
 							<input class="form-control" type="text" name="urlInput" value="" placeholder="Youtube URL" id="urlInput" />
@@ -117,7 +131,14 @@
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal">&times;</button>
 							<h4 class="modal-title">App Settings</h4>
-							<span id="retrievespreadsheetIdErrorHeader" class="label label-danger"></span><!-- Use this area for unauthorised notices -->
+							
+							<!-- Use this area for unauthorised notices -->
+							<div class="bg-danger hidden" id="retrievespreadsheetIdErrorHeader">
+								Error:
+								<span id="retrievespreadsheetIdErrorHeaderMessage"></span>
+								<a class="bg-info" href="#">Error Details</a>
+							</div>
+							
 						</div>
 						<div class="modal-body">
 							<div class="well well-sm" >
@@ -125,14 +146,26 @@
 									This application uses Google Spreadsheet to store data.
 									Click the button to create a new spreadsheet to store the data. <br />
 									<button id="createSpreadsheetBtn" class="btn btn-default" onclick="createSheet()">Create Spreadsheet</button>
-									<span id="retrievespreadsheetIdErrorCreate" class="label label-danger"></span>
+									
+									<div class="bg-danger hidden" id="retrievespreadsheetIdErrorCreate">
+										Error:
+										<span id="retrievespreadsheetIdErrorCreateMessage"></span>
+										<a class="bg-info" href="#">Error Details</a>
+									</div>
+									
 								</p>
 							</div>
 							<div class="well well-sm">
 								<h4>Existing Files<button type="button" id="refreshSpreadsheetListBtn" value="" onclick="clearSpreadsheetCollection()" class="btn btn-default glyphicon glyphicon-refresh" ></button></h4>
 								
 								Select a pre-existing spreadsheet file to load it.<br />
-								<span id="retrievespreadsheetIdError" class="label label-danger"></span>
+
+								<div class="bg-danger hidden" id="retrievespreadsheetIdError">
+									Error:
+									<span id="retrievespreadsheetIdErrorMessage"></span>
+									<a class="bg-info" href="#">Error Details</a>
+								</div>
+								
 								<div id="fileSelector" class="list-group">
 								</div>
 								<button id="spreadsheetSelectNextPage" class="btn btn-default" value="" onclick="handleSpreadsheetSearchPages('next')">Next</button>

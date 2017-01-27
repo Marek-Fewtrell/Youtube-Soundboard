@@ -56,9 +56,10 @@ function getSpreadsheetID(pageToken) {
 		  	$("#myModal2").modal("show");
 		  }
 
-    }, function(resposne) {
-    	errorHandling(resposne);
-    	//#retrievespreadsheetIdError
+    }, function(response) {
+    	$("#retrievespreadsheetIdError").removeClass("hidden");
+    	$("#retrievespreadsheetIdError").show();
+    	$("#retrievespreadsheetIdErrorMessage").text(errorHandling(response));
     });
 }
 
@@ -148,7 +149,7 @@ function createSheet() {
       	}
       ]
     }).then(function(response) {
-	    $("#retrievespreadsheetIdErrorCreate").text("");
+	    $("#retrievespreadsheetIdErrorCreate").hide();
     	console.log(response);
     	var result = response.result;
     	
@@ -158,7 +159,9 @@ function createSheet() {
 			$("#fileSelector").prepend($item);
 			
   }, function(response) {
-  	errorHandling(response);
-  	//#retrievespreadsheetIdErrorCreate
+	  $("#retrievespreadsheetIdErrorCreate").show();
+	  $("#retrievespreadsheetIdErrorCreate").removeClass("hidden");
+  	$("#retrievespreadsheetIdErrorCreateMessage").text(errorHandling(response));
+  	
   });
 }

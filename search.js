@@ -31,7 +31,7 @@ function search(pageToken) {
 		type: 'video',
 		pageToken: pageToken //Forgot to add this variable.
 	}).then(function(response) {
-		$("#searchError").text("");
+		$("#searchError").hide();
 		$("#search-container").empty();
 		//searchCollection = [];
 		
@@ -86,10 +86,9 @@ function search(pageToken) {
     }
 		    
 	}, function(response) {
-		console.log("Search error");
-		console.log(response);
-		//#searchError
-		errorHandling(response);
+		$("#searchError").removeClass("hidden");
+		$("#searchError").show();
+		$("#searchErrorMessage").text(errorHandling(response));
 	});
 }
 

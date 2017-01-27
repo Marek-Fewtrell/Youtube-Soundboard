@@ -26,26 +26,25 @@ function errorHandling(response) {
 	} else if (errorObject.code == 307) {
 		errorMessage = "Temporary redirect needed.";
   } else if (errorObject.code == 400) {
-  	//Bad Request
-  	console.log("error code 400");
+  	
   	switch(errorObject.status) {
   		case "badRequest":
-  			errorMessage = "Request is invalid.";
+  			errorMessage = "Request is invalid. Please try again or refresh the page.";
 	  		break;
 			case "invalid":
 				errorMessage = "Invalid value in request.";
 				break;
 			case "invalidQuery":
-				errorMessage = "Invalid query.";
+				errorMessage = "Invalid query. Please fix the query and try again.";
 				break;
 			case "keyExpired":
-				errorMessage = "API key has expired.";
+				errorMessage = "API key has expired. Please contact owner.";
 				break;
 			case "keyInvalid":
-				errorMessage = "API key is invalid";
+				errorMessage = "API key is invalid. Please contact owner.";
 				break;
 			case "parseError":
-				errorMessage = "Cannot parse the request body";
+				errorMessage = "Cannot parse the request body. Please try again or refresh the page.";
 				break;
 			case "required":
 				errorMessage = "Missing required information";
@@ -59,7 +58,6 @@ function errorHandling(response) {
   	
 	} else if (errorObject.code == 401) {
 		//Authorization
-		console.log("error code 401");
 		switch(errorObject.status) {
 			case "UNAUTHENTICATED":
   		case "unauthorized":
@@ -80,15 +78,22 @@ function errorHandling(response) {
 			default:
 				errorMessage = "An error related to authorisation has occured.";
   	}
-		
+  	errorMessage += "\n Re-authorsing now."
+		checkAuth();
 	} else if (errorObject.code == 402) {
-		errorMessage = "Money is required.";
+		errorMessage = "This shouldn't be here. Money is required.";
 	} else if (errorObject.code == 403) {
-	
 		switch(errorObject.status) {
+			case "appNotAuthorizedToFile":
+			case "insufficientFilePermissions":
 			case "PERMISSION_DENIED":
+				errorMessage = "Please authorise the app.";
+				$('#authorize-div').css("display", 'inline');
+				break;
+			case "Forbidden":
 			case "forbidden":
 				errorMessage = "Forbidden and cannot be completed.";
+				$('#authorize-div').css("display", 'inline');
 				break;
 			case "accessNotConfigured":
 				errorMessage = "This project can't access that API/Blocked due to abuse/ marked for deletion.";
@@ -123,6 +128,7 @@ function errorHandling(response) {
 			case "quotaExceeded":
 				errorMessage = "Requires more resources than the quota allows.";
 				break;
+			case "sharingRateLimitExceeded":
 			case "rateLimitExceeded":
 				errorMessage = "Too many requests have been sent within a given time span.";
 				break;
@@ -141,10 +147,7 @@ function errorHandling(response) {
 			case "domainPolicy":
 				$("#retrievespreadsheetIdError").text("Cannot be used with user's domain");
 				break;
-			case "appNotAuthorizedToFile":
-			case "sharingRateLimitExceeded":
-			case "insufficientFilePermissions":
-			
+				
 			//Search api
 			case "accountDelegationForbidden":
 			case "authenticatedUserAccountClosed":
@@ -152,11 +155,16 @@ function errorHandling(response) {
 			default: 
 				errorMessage = errorObject.msg;
 		}
-	
+		errorMessage = errorMessage + "\nEither refresh the page, reauthorise, or contact application owner."
 	} else if (errorObject.code == 404) {
-		//Not Found
-		errorMessage = "Could not be found.";
 	
+		switch(errorObject.status) {
+			case "NOT_FOUND":
+				errorMessage = "Requested entity was not found";
+				break;
+			default:
+				errorMessage = "Could not be found.";
+		}
 	} else if (errorObject.code == 405) {
 		errorMessage = "The HTTP method associated with the request is not supported.";
 	} else if (errorObject.code == 409) {
@@ -190,7 +198,8 @@ function errorHandling(response) {
 		}
 	}
 	
-	alert(errorMessage);
+	//alert(errorMessage);
+	return errorMessage;
 }
 
 //Global Domain Errors

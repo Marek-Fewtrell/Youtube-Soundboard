@@ -12,7 +12,7 @@ function getSheet() {
       spreadsheetId: SPREADSHEET_ID,
       range: 'Sheet1!A2:B'
     }).then(function(response) {
-    	$("#savedVideosError").addClass("hidden");
+    	$("#savedVideosError").hide();
     	console.log(response);
     	//TODO: replace this with a function call to separate logic.
     	savedVideosCollection = [];
@@ -36,18 +36,14 @@ function getSheet() {
 			$("#refreshSavedVideosBtn").removeClass("disabled");
 			
   }, function(response) {
-    //setErrorMessage('Error: ' + response.result.error.message);
-    console.log(response);
     $("#savedVideosInfo").hide();
-    $("#savedVideosError").show();
-    $("#savedVideosError").text("Some error happened");
+    setErrorMessage(errorHandling(response));
     /*
 			401 error
 			Reauthorise this.
 			Clear the table, and populate it again.
 			The spreadsheet will have already been selected
 		*/
-		errorHandling(response);
   });
 }
 
@@ -88,7 +84,7 @@ function setInfoMessage(message) {
 
 function setErrorMessage(message) {
 	$("#savedVideosError").removeClass("hidden");
-	$('#savedVideosError').text(message);
+	$('#savedVideosErrorMessage').text(message);
 }
 
 
@@ -100,7 +96,7 @@ function setErrorMessage(message) {
  *
 */
 function createRow() {
-	setInfoMessage("Creating new row.");
+	//setInfoMessage("Creating new row.");
   gapi.client.sheets.spreadsheets.values.append({
     spreadsheetId: SPREADSHEET_ID,
     range: "Sheet1",
@@ -129,11 +125,8 @@ function createRow() {
   }, function(response) {
     //visualFeedback("Unsuccessfully created.", false);
     $("#createEditModalError").show();
-    $("#createEditModalError").text("Was unsuccessful.");
-    console.log("CreateRow function failure");
-    console.log(response);
-    //createEditModalError
-    errorHandling(response);
+    $("#createEditModalError").removeClass("hidden");
+    $("#createEditModalErrorMessage").text(errorHandling(response));
   });
 }
 
@@ -161,18 +154,17 @@ function updateRow(rownumber, newName, newUrl) {
 		Check the repsonse for correct number of updates.
 		if (response.result.updatedCells === 4) {}
 		*/
-		$("#createEditModalError").addClass("hidden");
+		$("#createEditModalError").hide();
 		updateSingleVideo(rownumber, newName, newUrl);
 		populateTable();
     closeModal();
     visualFeedback("Successfully updated.", true);
     $("#savedVideosInfo").hide();
   }, function(response) {
-    visualFeedback("Unsuccessfully updated.", false);
+    //visualFeedback("Unsuccessfully updated.", false);
     $("#createEditModalError").show();
-    $("#createEditModalError").text("Was unsuccessful.");
-    //createEditModalError
-    errorHandling(response);
+    $("#createEditModalError").removeClass("hidden");
+    $("#createEditModalErrorMessage").text(errorHandling(response));
   });
 }
 
@@ -195,11 +187,7 @@ function deleteRow(rownumber) {
     populateTable();
     $("#savedVideosInfo").hide();
   }, function(response) {
-		console.log("deleteRow failure");
-		console.log(response);
-    visualFeedback("Unsuccessfully deleted.", false);
-    
-    //createEditModalError
-    errorHandling(response);
+		visualFeedback("Unsuccessfully deleted.", false);
+		setErrorMessage(errorHandling(response));
   });
 }
