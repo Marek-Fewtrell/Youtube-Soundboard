@@ -17,7 +17,6 @@ function getSpreadsheetID(pageToken) {
       'q' : "trashed = false and mimeType contains 'application/vnd.google-apps.spreadsheet'",
       'pageToken' : pageToken
     }).then(function(resp) {
-    	console.log(resp);
     	$("#retrievespreadsheetIdError").text("");
 	    var files = resp.result.files;
 	    $("#fileSelector").empty();
@@ -150,7 +149,6 @@ function createSheet() {
       ]
     }).then(function(response) {
 	    $("#retrievespreadsheetIdErrorCreate").hide();
-    	console.log(response);
     	var result = response.result;
     	
     	//disable the create spreadsheet btn ??

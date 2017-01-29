@@ -13,7 +13,6 @@ function getSheet() {
       range: 'Sheet1!A2:B'
     }).then(function(response) {
     	$("#savedVideosError").hide();
-    	console.log(response);
     	//TODO: replace this with a function call to separate logic.
     	savedVideosCollection = [];
     	
@@ -56,7 +55,6 @@ function getSheet() {
  * status - Success is true.
  */
 function visualFeedback(message, status) {
-	console.log("visualFeedback function");
   var $vfelement = $("#visualFeedback");
   $vfelement.text(message);
   $vfelement.show();

@@ -46,7 +46,7 @@
 								<div class="bg-danger hidden" id="searchError">
 									Error:
 									<span id="searchErrorMessage"></span>
-									<a class="bg-info" href="#">Error Details</a>
+									<a class="bg-info" data-toggle="modal" href="#errorDetailsModal">Error Details</a>
 								</div>
 						
 								<input type="text" class="form-control" placeholder="search" id="query" />
@@ -80,13 +80,12 @@
 						<div class="bg-danger hidden" id="savedVideosError">
 							Error:
 							<span id="savedVideosErrorMessage"></span>
-							<a class="bg-info" href="#">Error Details</a>
+							<a class="bg-info" data-toggle="modal" href="#errorDetailsModal">Error Details</a>
 						</div>
 						<div class="table-responsive clearfix">
-							<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="text-center table table-striped table-bordered table-condensed">
+							<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="table table-striped table-bordered table-condensed">
 								<tr>
 									<th>Video Name</th>
-									<th>Video URL</th>
 									<th>Actions</th>
 								</tr>
 							</table>
@@ -109,7 +108,7 @@
 							<div class="bg-danger hidden" id="createEditModalError">
 								Error:
 								<span id="createEditModalErrorMessage"></span>
-								<a class="bg-info" href="#">Error Details</a>
+								<a class="bg-info" data-toggle="modal" href="#errorDetailsModal">Error Details</a>
 							</div>
 							
 							<input type="hidden" id="videoRowNumberHolder" />
@@ -136,7 +135,7 @@
 							<div class="bg-danger hidden" id="retrievespreadsheetIdErrorHeader">
 								Error:
 								<span id="retrievespreadsheetIdErrorHeaderMessage"></span>
-								<a class="bg-info" href="#">Error Details</a>
+								<a class="bg-info" data-toggle="modal" href="#errorDetailsModal">Error Details</a>
 							</div>
 							
 						</div>
@@ -150,7 +149,7 @@
 									<div class="bg-danger hidden" id="retrievespreadsheetIdErrorCreate">
 										Error:
 										<span id="retrievespreadsheetIdErrorCreateMessage"></span>
-										<a class="bg-info" href="#">Error Details</a>
+										<a class="bg-info" data-toggle="modal" href="#errorDetailsModal">Error Details</a>
 									</div>
 									
 								</p>
@@ -163,7 +162,7 @@
 								<div class="bg-danger hidden" id="retrievespreadsheetIdError">
 									Error:
 									<span id="retrievespreadsheetIdErrorMessage"></span>
-									<a class="bg-info" href="#">Error Details</a>
+									<a class="bg-info" data-toggle="modal" href="#errorDetailsModal">Error Details</a>
 								</div>
 								
 								<div id="fileSelector" class="list-group">
@@ -178,6 +177,26 @@
 					</div>
 				</div>
 				
+			</div>
+			
+			<div id="errorDetailsModal" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+					
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title">Error Details</h4>
+						</div>
+						<div class="modal-body">
+							Code: <span id="errorDetailsModalCode"></span><br/>
+							Status: <span id="errorDetailsModalStatus"></span><br/>
+							Message: <span id="errorDetailsModalMessage"></span><br/>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
 			</div>
 			
 		</div>

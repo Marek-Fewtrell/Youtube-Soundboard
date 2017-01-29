@@ -118,16 +118,16 @@ function addToTable(name, url, rownumber) {
 	var videoURL = url;
 	var videoID = videoURL.match(/v=([^&]+)/)[1];
 
-	var $editBtn = $("<button/>").addClass("btn btn-default btnEdit").attr("value", rownumber).text("Edit");
-	var $cueVideoBtn = $("<button/>").addClass("btn btn-default btnCue").attr("value", videoID).text("Cue Video");
-	var $removeBtn = $("<button/>").addClass("btn btn-default btnDelete btn-danger").attr("value", rownumber).text("Remove");
-	
-	var $divContainer = $("<div/>").addClass("btn-group").append($editBtn, $cueVideoBtn, $removeBtn);
+	var $editBtn = $("<button/>").addClass("btn btn-default btnEdit glyphicon glyphicon-pencil").attr("value", rownumber);
+	var $cueVideoBtn = $("<button/>").addClass("btn btn-default btnCue glyphicon glyphicon-play-circle").attr("value", videoID);
+	var $removeBtn = $("<button/>").addClass("btn btn-default btnDelete btn-danger glyphicon glyphicon-trash").attr("value", rownumber);
 	
 	var $nameCol = $("<td/>").append(videoName);
-	var $viewCol = $("<td/>").append($("<a>").attr("href", url).attr("target", "_blank").addClass("btn btn-default").text("View on Youtube"));
+	var $link = $("<a>").attr("href", url).attr("target", "_blank").addClass("btn btn-default glyphicon glyphicon-link");
 	
-	var $row = $("<tr>").append($nameCol, $viewCol, $("<td>").append($divContainer));
+	var $divContainer = $("<span>").addClass("btn-group").append($cueVideoBtn, $link, $editBtn, $removeBtn);
+	
+	var $row = $("<tr>").append($nameCol, $("<td>").append($divContainer));
 	$("#saveListTable").append($row);
 }
 
@@ -259,31 +259,23 @@ function initialisePlayer() {
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
 
-// 3. This function creates an <iframe> (and YouTube player)
-//    after the API code downloads.
+// This function creates an <iframe> (and YouTube player)
+//   after the API code downloads.
 function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '390',
     width: '640',
     videoId: 'dv13gl0a-FA',
     events: {
-      //'onReady': onPlayerReady,
       'onStateChange': onPlayerStateChange
     }
   });
 }
 
-// 4. The API will call this function when the video player is ready.
-function onPlayerReady(event) {
-  //event.target.playVideo();
-}
-
-// 5. The API calls this function when the player's state changes.
-var done = false;
+//The API calls this function when the player's state changes.
 function onPlayerStateChange(event) {
-	//console.log(event);
 	//This starts playing a video after pressing the stop button.
-  if (loopVideoBool == true && event.data == YT.PlayerState.CUED) {
+  if (loopVideoBool == true && event.data == YT.PlayerState.ENDED) {
   	playVideo();
   }
 }

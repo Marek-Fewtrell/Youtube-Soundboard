@@ -1,7 +1,6 @@
 
 function errorHandling(response) {
-	console.log("in errorHandling");
-	console.log(response);
+
 	var errorObject = {};
 	if (response.result.error.errors != undefined) {
 		errorObject.code = response.result.error.code;
@@ -12,8 +11,7 @@ function errorHandling(response) {
 		errorObject.status = response.result.error.status;
 		errorObject.msg = response.result.error.message;
 	}
-	console.log("errorObject");
-	console.log(errorObject);
+	
 	var errorMessage = "";
 	
 	
@@ -57,7 +55,7 @@ function errorHandling(response) {
   	}
   	
 	} else if (errorObject.code == 401) {
-		//Authorization
+	
 		switch(errorObject.status) {
 			case "UNAUTHENTICATED":
   		case "unauthorized":
@@ -78,7 +76,7 @@ function errorHandling(response) {
 			default:
 				errorMessage = "An error related to authorisation has occured.";
   	}
-  	errorMessage += "\n Re-authorsing now."
+  	errorMessage += "\n Trying to re-authorse now."
 		checkAuth();
 	} else if (errorObject.code == 402) {
 		errorMessage = "This shouldn't be here. Money is required.";
@@ -198,8 +196,14 @@ function errorHandling(response) {
 		}
 	}
 	
-	//alert(errorMessage);
+	setErrorModalDetails(errorObject, errorMessage);
 	return errorMessage;
+}
+
+function setErrorModalDetails(errorObject, errorMessage) {
+	$("#errorDetailsModalCode").text(errorObject.code);
+	$("#errorDetailsModalMessage").text(errorMessage);
+	$("#errorDetailsModalStatus").text(errorObject.status);
 }
 
 //Global Domain Errors
