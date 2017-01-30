@@ -1,26 +1,37 @@
+/*
+ *
+ *
+*/
 
+//Youtube Player object.
 var player;
 
+//Youtube search page tokens.
 var nextSearchPageToken = "";
 var previousSearchPageToken = "";
 
+//Loop button state
 var loopVideoBool = false;
 
 $(document).ready(function() {
+	//Loads the youtube player.
 	initialisePlayer();
 
+	//Saved Video delete button action.
 	$("#saveListTable").on("click", ".btnDelete", function () {
 		var confirmBoxResult = confirm("Are you sure you want to delete that?");
 		if (confirmBoxResult == true) {
 			deleteRow($(this).val());
-			//$(this).closest("tr").remove(); //Alternative to redoing the table.
+			//$(this).closest("tr").remove(); //Alternative to repopulating the table.
 		}
 	});
 	
+	//Saved Video cue button action.
 	$("#saveListTable").on("click", ".btnCue", function () {
 		cueVideoAction($(this).val());
 	});
 	
+	//Saved Video edit button action.
 	$("#saveListTable").on("click", ".btnEdit", function() {
 		var index = getSingleVideoIndex($(this).val());
 		var videoItem = savedVideosCollection[index];
@@ -29,11 +40,13 @@ $(document).ready(function() {
 		$("#videoRowNumberHolder").val(videoItem.rowNumber);
 	});
 	
+	//Saved Video create button action
 	$("#newSavedVideoBtn").on("click", function() {
 		changeModalAction("create");
 		clearModal();
 	});
 	
+	//Create/Edit Saved Video apply button action
 	$("#modalApplyBtn").on("click", function () {
 		var action = $("#modalAction").val();
 		if (action == "create") {
@@ -43,16 +56,19 @@ $(document).ready(function() {
 		}
 	});
 	
+	//Youtube Search add video button action
 	$("#search-container").on("click", ".btnAddSearch", function () {
 		var searchItem = searchCollection[$(this).val()];
 		changeModalAction("create");
 		addVideoSearchAction(searchItem.videoTitle, searchItem.videoId);
 	});
 	
+	//Youtube Search preview video button action
 	$("#search-container").on("click", ".previewVidBtn", function () {
 		previewVideoAction($(this).val());
 	});
 	
+	//App Settings select file action
 	$("#fileSelector").on("click", ".spreadSheetIDBtn", function() {
 		$(".spreadSheetIDBtn").removeClass("active");
 		
@@ -65,10 +81,12 @@ $(document).ready(function() {
 		$("#refreshSavedVideosBtn").attr("disabled", false);
 	});
 	
+	//Create/Edit Modal on open action
 	$("#myModal").on('show.bs.modal', function () {
 		$("#createEditModalError").addClass("hidden");
 	});
 	
+	//Youtube Player loop button toggle action
 	$("#loopVideoBtn").on("click", function (event) {
 		if (loopVideoBool) {
 			loopVideoBool = false;
@@ -87,6 +105,10 @@ $(document).ready(function() {
 	
 });
 
+/*
+ * Function: addVideoURLAction
+ * Create/Edit create video action. Creates a new row in the backend.
+ */
 function addVideoURLAction() {
 	var url = $("#urlInput").val();
 	var name = $("#videoNameInput").val();
@@ -95,6 +117,10 @@ function addVideoURLAction() {
 	//closeModal(); //Maybe use this to separate the functionality.
 }
 
+/*
+ * Function: updateVideoAction
+ * Create/Edit update video action. Updates the backend.
+ */
 function updateVideoAction() {
 	var newUrl = $("#urlInput").val();
 	var newName = $("#videoNameInput").val();
@@ -102,11 +128,28 @@ function updateVideoAction() {
 	updateRow(rownumber, newName, newUrl);
 }
 
+/*
+ * Function: addVideoSearchAction
+ * Youtube Search add video button action.
+ *
+ * Params:
+ * name - Name of the video.
+ * videoId - Id of the youtube video.
+ */
 function addVideoSearchAction(name, videoId) {
 	var url = "https://www.youtube.com/watch?v=" + videoId;
 	populateModal(name, url);
 }
 
+/*
+ * Function: addToTable
+ * Creates and adds a row to the Saved Video table.
+ *
+ * Params:
+ * name - Name to display.
+ * url - URL of the video.
+ * rownumber - The number of the row it is in.
+ */
 function addToTable(name, url, rownumber) {
 	//Use some sort of validation.
 	/*if (rownumber === undefined) {
@@ -125,12 +168,16 @@ function addToTable(name, url, rownumber) {
 	var $nameCol = $("<td/>").append(videoName);
 	var $link = $("<a>").attr("href", url).attr("target", "_blank").addClass("btn btn-default glyphicon glyphicon-link");
 	
-	var $divContainer = $("<span>").addClass("btn-group").append($cueVideoBtn, $link, $editBtn, $removeBtn);
+	var $btnGroup = $("<span>").addClass("btn-group").append($cueVideoBtn, $link, $editBtn, $removeBtn);
 	
-	var $row = $("<tr>").append($nameCol, $("<td>").append($divContainer));
+	var $row = $("<tr>").append($nameCol, $("<td>").append($btnGroup));
 	$("#saveListTable").append($row);
 }
 
+/*
+ * Function: populateTable
+ * Populates the Saved Video table with any videos currently in the collection.
+ */
 function populateTable() {
 	$("#saveListTable tr:gt(0)").remove();
 	$.each(savedVideosCollection, function(index, item) {
@@ -138,36 +185,78 @@ function populateTable() {
 	});
 }
 
+/*
+ * Function: openModal
+ * Opens the Create/Edit Modal.
+ */
 function openModal() {
 	$("#myModal").modal("show");
 }
+
+/*
+ * Function: closeModal
+ * Closes the Create/Edit Modal.
+ */
 function closeModal() {
 	$("#myModal").modal("hide");
 }
+
+/*
+ * Function: clearModal
+ * Clears the inputs of the Create/Edit modal.
+ */
 function clearModal() {
 	$("#videoNameInput").val("");
 	$("#urlInput").val("");
 }
+
+/*
+ * Function: populateModal
+ * Populates the Create/Edit modal inputs with a videos info. Then opens the modal.
+ *
+ * Params:
+ * name - Name of video.
+ * url - URL of video.
+ */
 function populateModal(name, url) {
 	$("#videoNameInput").val(name);
 	$("#urlInput").val(url);
 	openModal();
 }
+
+/*
+ * Function: changeModalAction
+ * Changes the Create/Edit Modal action of the apply button.
+ *
+ * Params:
+ * action - The string of the action to do. create/edit.
+ */
 function changeModalAction(action) {
 	$("#modalAction").val(action);
 	$("#modalTitle").text(action);
 }
 
-
+//Future functionality.
 function getVideoDetails(url) {
 
 }
 
+/*
+ * Function: refreshSavedVideoTable
+ * Clears the Saved Videos table and retrieves new data.
+ */
 function refreshSavedVideoTable() {
 	$("#saveListTable tr:gt(0)").remove();
 	getSheet();
 }
 
+/*
+ * Function: validateUrl
+ * Validates a url to be a correct youtube url.
+ *
+ * Params:
+ * url - the string youtube url.
+ */
 function validateUrl(url) {
 	var pattern = /https:\/\/www.youtube.com\/watch\?v\=([^&]+)/;
 	if (pattern.test(url)) {
@@ -177,6 +266,15 @@ function validateUrl(url) {
 	}
 }
 
+/*
+ * Function: addSingleVideo
+ * Adds a new video to the collection which is displayed in the Saved Videos table.
+ *
+ * Params:
+ * name - Name to display.
+ * url - Url of the video.
+ * rownumber - The number of the row it is in.
+ */
 function addSingleVideo(name, url, rownumber) {
 	var newVideoItem = {"name": name, "url" : url, "rowNumber": rownumber};
 	var previousLength = savedVideosCollection.length;
@@ -188,6 +286,13 @@ function addSingleVideo(name, url, rownumber) {
 	}
 }
 
+/*
+ * Function: getSingleVideoIndex
+ * Retrieves the location of a video from the collection. Using the row number it occupies in the spreadsheet.
+ *
+ * Params:
+ * rownumber - The number of the row it is in.
+ */
 function getSingleVideoIndex(rownumber) {
 	/*$.each(savedVideosCollection, function(index, item) {
 		if (item.rowNumber == rownumber) {
@@ -205,8 +310,16 @@ function getSingleVideoIndex(rownumber) {
 	return videoIndex;
 }
 
+/*
+ * Function: updateSingleVideo
+ * Updates the name and url of a video in the collection which is displayed in the Saved Videos table.
+ *
+ * Params:
+ * rownumber - The number of the row it is in.
+ * name - New name.
+ * url - New Url of the video.
+ */
 function updateSingleVideo(rownumber, name, url) {
-	//var videoObject = savedVideosCollection[index];
 	var index = getSingleVideoIndex(rownumber);
 	if (index == -1) {
 		return false;
@@ -217,6 +330,13 @@ function updateSingleVideo(rownumber, name, url) {
 	return true;
 }
 
+/*
+ * Function: removeSingleVideo
+ * Removes a video from the collection which is displayed in the Saved Videos table.
+ *
+ * Params:
+ * rownumber - The number of the row it is in.
+ */
 function removeSingleVideo(rownumber) {
 	//Should just retrieve the new sheet.
 	var index = getSingleVideoIndex(rownumber);
@@ -227,30 +347,61 @@ function removeSingleVideo(rownumber) {
 	savedVideosCollection.splice(index, 1);
 }
 
+/*
+ * Function: previewVideoAction
+ * Loads and plays a video. Set by the Youtube video Id.
+ *
+ * Params:
+ * videoId - the youtube video Id.
+ */
 function previewVideoAction(videoId) {
 	player.loadVideoById({
 		videoId: videoId
 	});
 }
 
+/*
+ * Function: cueVideoAction
+ * Loads but doesn't play a video. Set by the Youtube video Id.
+ *
+ * Params:
+ * videoID - the youtube video Id.
+ */
 function cueVideoAction(videoID) {
 	player.cueVideoById({
 		videoId:videoID
 	});
 }
 
+/*
+ * Function: playVideo
+ * Plays the Youtube Player if it a video is able to be played. Such as cued or paused.
+ */
 function playVideo() {
 	player.playVideo();
 }
 
+/*
+ * Function: pauseVideo
+ * Pauses the Youtube PLayer if it is playing a video.
+ */
 function pauseVideo() {
 	player.pauseVideo();
 }
 
+/*
+ * Function: stopVideo
+ * Stops the Youtube Player if it is currently playing a video.
+ */
 function stopVideo() {
 	player.stopVideo();
 }
-	
+
+/*
+ * Function: initialisePlayer
+ * Initilises the Youtube Player Iframe.
+ * For more information see https://developers.google.com/youtube/iframe_api_reference
+ */
 function initialisePlayer() {
 	var tag = document.createElement('script');
 	
@@ -259,8 +410,11 @@ function initialisePlayer() {
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
 
-// This function creates an <iframe> (and YouTube player)
-//   after the API code downloads.
+/*
+ * Function: onYouTubeIframeAPIReady
+ * This function creates an <iframe> (and YouTube player)
+ *   after the API code downloads.
+*/
 function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '390',
@@ -272,7 +426,10 @@ function onYouTubeIframeAPIReady() {
   });
 }
 
-//The API calls this function when the player's state changes.
+/*
+ * Function: onPlayerStateChange
+ * The API calls this function when the player's state changes.
+*/
 function onPlayerStateChange(event) {
 	//This starts playing a video after pressing the stop button.
   if (loopVideoBool == true && event.data == YT.PlayerState.ENDED) {

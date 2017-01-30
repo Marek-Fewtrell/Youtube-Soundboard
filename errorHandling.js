@@ -256,6 +256,13 @@ function setErrorModalDetails(errorObject, errorMessage) {
 	result.error.code 401
 	result.error.status UNAUTHENTICATED
 */
+/*
+	when an error in sheetapp
+	401 error
+	Reauthorise this.
+	Clear the table, and populate it again.
+	The spreadsheet will have already been selected
+*/
 
 function APIDomainErrorHandling(reponse, domain) {
 	

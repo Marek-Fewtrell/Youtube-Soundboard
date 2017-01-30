@@ -1,11 +1,15 @@
 
-var spreadsheetSearchCollection = [];
-var spreadsheetSearchNextPageToken = "";
-var spreadsheetSearchCurrentPage = 0;
-var spreadsheetSearchTotalPages = 0;
+var spreadsheetSearchCollection = []; //Collection of spreadsheet files found in users drive.
+var spreadsheetSearchNextPageToken = ""; //Next page token
+var spreadsheetSearchCurrentPage = 0; // Current page of search results.
+var spreadsheetSearchTotalPages = 0; // Total pages of current drive search.
 
-/**
- * Print files.
+/*
+ * Function: getSpreadsheetID
+ * Makes an API call to Google Drive for any Spreadsheets. If a page token is supplied, it retrieves that page of the search request.
+ *
+ * Params:
+ * pageToken - string token of page to retrieve if needed.
  */
 function getSpreadsheetID(pageToken) {
 	if (pageToken === undefined) {
@@ -62,6 +66,13 @@ function getSpreadsheetID(pageToken) {
     });
 }
 
+/*
+ * Function: spreadsheetSearchPopulateItem
+ * Populates the spreadsheet file selection with any files currently in the collection.
+ *
+ * Params:
+ * file - A file in the collection to choose from.
+ */
 function spreadsheetSearchPopulateItem(file) {
 	var $item = $("<button>").text(file.name).addClass("list-group-item spreadSheetIDBtn").val(file.id);
 	if (file.id == SPREADSHEET_ID) {
@@ -70,6 +81,10 @@ function spreadsheetSearchPopulateItem(file) {
   $("#fileSelector").append($item);
 }
 
+/*
+ * Function: clearSpreadsheetCollection
+ * Resets all variables when making a new search.
+ */
 function clearSpreadsheetCollection() {
 	spreadsheetSearchCollection = [];
 	spreadsheetSearchNextPageToken = "";
@@ -78,6 +93,14 @@ function clearSpreadsheetCollection() {
 	getSpreadsheetID();
 }
 
+/*
+ * Function: handleSpreadsheetSearchPages
+ * It handles the multiple pages of a search result when viewed. It saves the results of each page for the current query so multiple request
+ *  aren't made when returning to previously views search result pages.
+ *
+ * Params:
+ * pageToken - Drive Search result button action. next or previous.
+ */
 function handleSpreadsheetSearchPages(action) {
 	
 	if (action == "next" ) {//&& spreadsheetSearchCurrentPage + 1 <= spreadsheetSearchTotalPages) {
@@ -115,6 +138,10 @@ function handleSpreadsheetSearchPages(action) {
 	
 }
 
+/*
+ * Function: createSheet
+ * Makes an API call to create a new spreadsheet to use. Also populates the first row with the columns 'Vidoe Name' and 'Video URL'.
+ */
 function createSheet() {
 	var spreadsheetName = prompt("Enter file name", "Youtube Sounboard");
   gapi.client.sheets.spreadsheets.create({

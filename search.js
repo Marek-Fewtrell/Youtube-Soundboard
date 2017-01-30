@@ -1,24 +1,18 @@
 
+
+var maxResultsDisplay = 5; //Number of results to display per page.
+var searchCollection = []; //collection of search pages for current search query.
+var searchNextPageToken = ""; //search next page token
+var searchCurrentPage = 0; //Search current page of current search query
+var searchTotalPages = 0; //Total number of pages for current search query
+
 /*
- * Deprecated
- * Previously used to load the search api.
+ * Function: search
+ * Makes an API call with the current query. If a page token is supplied, it retrieves that page of the search request.
+ *
+ * Params:
+ * pageToken - string token of page to retrieve if needed.
 */
-function handleSearchAPILoaded() {
-	gapi.client.setApiKey(apiKey);
-	var discoveryUrl = "https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest";
-	/*gapi.client.load('youtube', 'v3', function() {
-		//api is ready
-	});*/
-	
-	//gapi.client.load(discoveryUrl).then(checkAuth);
-}
-
-var maxResultsDisplay = 5;
-var searchCollection = [];
-var searchNextPageToken = "";
-var searchCurrentPage = 0;
-var searchTotalPages = 0;
-
 function search(pageToken) {
 	if (pageToken === undefined) {
 		pageToken = "";
@@ -92,6 +86,13 @@ function search(pageToken) {
 	});
 }
 
+/*
+ * Function: searchPopulateItem
+ * Creates and adds a item from the search result to the list of results displayed on the page.
+ *
+ * Params:
+ * item - An item from the search result.
+*/
 function searchPopulateItem(item) {
 	var $img = $("<img/>").addClass("media-object").attr("src", item.thumbnail.thumbnailUrl).attr("alt", "Video Thumbnail").attr("width", item.thumbnail.thumbnailWidth).attr("height", item.thumbnail.thumbnailHeight);
 	var $imgContainer = $("<div/>").addClass("media-left media-middle").append($img);
@@ -114,6 +115,15 @@ function searchPopulateItem(item) {
 	$("#search-container").append($mainContainer);
 }
 
+
+/*
+ * Function: handleSearchPages
+ * It handles the multiple pages of a search result when viewed. It saves the results of each page for the current query so multiple request
+ *  aren't made when returning to previously views search result pages.
+ *
+ * Params:
+ * action - Youtube Search result button action. next or previous.
+*/
 function handleSearchPages(action) {
 	
 	if (action == "next" ) {

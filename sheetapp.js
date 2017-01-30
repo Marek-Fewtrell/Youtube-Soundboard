@@ -1,10 +1,10 @@
 
+//The collection of Saved Videos
 var savedVideosCollection = [];
 
 /*
  * Function: getSheet
  * Retrieves the sheet and gets the data from it.
- *
 */
 function getSheet() {
 	setInfoMessage("Loading data, please wait");
@@ -37,12 +37,6 @@ function getSheet() {
   }, function(response) {
     $("#savedVideosInfo").hide();
     setErrorMessage(errorHandling(response));
-    /*
-			401 error
-			Reauthorise this.
-			Clear the table, and populate it again.
-			The spreadsheet will have already been selected
-		*/
   });
 }
 
@@ -69,8 +63,8 @@ function visualFeedback(message, status) {
 }
 
 /*
- * Function: setMessage
- * Set the message to be displayed to the user
+ * Function: setInfoMessage
+ * Set the information message to be displayed to the user
  *
  * Params:
  * message - message to be displayed.
@@ -80,6 +74,13 @@ function setInfoMessage(message) {
 	$('#savedVideosInfo').text(message);
 }
 
+/*
+ * Function: setErrorMessage
+ * Set the error message to be displayed to the user
+ *
+ * Params:
+ * message - message to be displayed.
+ */
 function setErrorMessage(message) {
 	$("#savedVideosError").removeClass("hidden");
 	$('#savedVideosErrorMessage').text(message);
