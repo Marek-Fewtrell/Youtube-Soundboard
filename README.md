@@ -13,7 +13,7 @@ A customisable soundboard which allows you to search and save Youtube videos to 
 3. Enable the Google Sheets API in the Google Developer Console and create an OAuth Client ID.
 4. FInally, create a file named secret.js and include the following line with your API key.
 
-..* ```
+```
 var apiKey = "**API_KEY_HERE**";
 
 var CLIENT_ID = "**OAuth_CLIENT_ID_HERE**";
