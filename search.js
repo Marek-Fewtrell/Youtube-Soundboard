@@ -1,23 +1,31 @@
 
 
-var Search = function(){
-	var searchCollection = []; //collection of search pages for current search query.
+var mySearch = {
+	searchCollection: [], //collection of search pages for current search query.
 	
-	this.addItem = function(item) {
-		searchCollection.push(item);
-	};
+	addItem: function(item) {
+		this.searchCollection.push(item);
+	},
+	collectionLength: function() {
+		return this.searchCollection.length;
+	},
+	clearCollection: function() {
+		this.searchCollection = [];
+	},
 	
-	this.getCollection = function() {
-		return searchCollection;
-	};
-	this.collectionLength = function() {
-		return searchCollection.length;
-	};
+	maxResultsDisplay: 5, //Number of results to display per page.
+	searchNextPageToken: "", //search next page token
+	searchCurrentPage: 0, //Search current page of current search query
+	searchTotalPages: 0, //Total number of pages for current search query
 	
-	this.maxResultsDisplay = 5; //Number of results to display per page.
-	this.searchNextPageToken = ""; //search next page token
-	this.searchCurrentPage = 0; //Search current page of current search query
-	this.searchTotalPages = 0; //Total number of pages for current search query
+	searchQuery: "",
+	getQuery: function() {
+		return this.searchQuery;
+	},
+	setQuery: function(query) {
+		this.searchQuery = query;
+	},
+	
 };
 
 var SearchItem = function( index, videoId, title, channelId, channelTitle, thumbnailUrl, thumbnailsHeight, thumbnailsWidth) {
@@ -32,13 +40,24 @@ var SearchItem = function( index, videoId, title, channelId, channelTitle, thumb
 	this.thumbnail.thumbnailWidth = thumbnailsWidth;
 };
 
-var mySearch = new Search();
 
 //var maxResultsDisplay = 5; //Number of results to display per page.
 //var searchCollection = []; //collection of search pages for current search query.
 //var searchNextPageToken = ""; //search next page token
 //var searchCurrentPage = 0; //Search current page of current search query
 //var searchTotalPages = 0; //Total number of pages for current search query
+
+
+function newSearch() {
+	var q = $("#query").val();
+	if (q != mySearch.getQuery()) {
+		mySearch.setQuery(q);
+		mySearch.clearCollection();
+	} else {
+		//go to first page of current results.
+	}
+	search();
+}
 
 /*
  * Function: search
@@ -52,16 +71,14 @@ function search(pageToken) {
 		pageToken = "";
 	}
 	
-	var q = $("#query").val();
 	var request = gapi.client.youtube.search.list({
-		q: q,
+		q: mySearch.getQuery(),
 		part: 'snippet',
 		type: 'video',
 		pageToken: pageToken //Forgot to add this variable.
 	}).then(function(response) {
 		$("#searchError").hide();
 		$("#search-container").empty();
-		//searchCollection = [];
 		
 		var results = response.result;
 		nextSearchPageToken = (results.nextPageToken !== undefined) ? results.nextPageToken : "";
@@ -83,7 +100,6 @@ function search(pageToken) {
 			
 			var newSearchItem = new SearchItem(index, item.id.videoId, item.snippet.title, item.snippet.channelId, item.snippet.channelTitle, item.snippet.thumbnails.default.url, item.snippet.thumbnails.default.height, item.snippet.thumbnails.default.width);
 			
-			//searchCollection.push(newSearchItem);
 			mySearch.addItem(newSearchItem);
 			searchPopulateItem(newSearchItem);
 		});
@@ -173,9 +189,8 @@ function handleSearchPages(action) {
 	}
 
 	$("#search-container").empty();
-	var tempCollection = mySearch.getCollection();
 	for (var i = startIndex; i < endIndex; i++) {
-		searchPopulateItem(tempCollection[i]);
+		searchPopulateItem(mySearch.searchCollection[i]);
 	}
 	
 	if (mySearch.searchNextPageToken != "" && startIndex >= mySearch.collectionLength()) {
