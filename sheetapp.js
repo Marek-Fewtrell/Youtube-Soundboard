@@ -1,6 +1,8 @@
 
-//The collection of Saved Videos
-var savedVideosCollection = [];
+var mySheet = {
+	//The collection of Saved Videos
+	savedVideosCollection: []
+};
 
 /*
  * Function: getSheet
@@ -14,7 +16,7 @@ function getSheet() {
     }).then(function(response) {
     	$("#savedVideosError").hide();
     	//TODO: replace this with a function call to separate logic.
-    	savedVideosCollection = [];
+    	mySheet.savedVideosCollection = [];
     	
     	var results = response.result;
     	if (results.values != undefined && results.values.length > 0) {
@@ -23,7 +25,7 @@ function getSheet() {
 		  		var url = (results.values[i][1] === undefined) ? "" : results.values[i][1];
 		  		
 		  		var videoObject = {"name": name, "url" : url, "rowNumber": 2+i};
-		  		savedVideosCollection.push(videoObject);
+		  		mySheet.savedVideosCollection.push(videoObject);
 		  	}
 		  	populateTable();
 		  	visualFeedback("Successfully loaded the sheet.", true);
