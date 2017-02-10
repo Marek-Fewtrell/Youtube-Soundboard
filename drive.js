@@ -1,8 +1,11 @@
 
-var spreadsheetSearchCollection = []; //Collection of spreadsheet files found in users drive.
-var spreadsheetSearchNextPageToken = ""; //Next page token
-var spreadsheetSearchCurrentPage = 0; // Current page of search results.
-var spreadsheetSearchTotalPages = 0; // Total pages of current drive search.
+var myDrive = {
+	spreadsheetSearchCollection: [], //Collection of spreadsheet files found in users drive.
+	spreadsheetSearchNextPageToken: "", //Next page token
+	spreadsheetSearchCurrentPage: 0, // Current page of search results.
+	spreadsheetSearchTotalPages: 0, // Total pages of current drive search.
+};
+
 
 /*
  * Function: getSpreadsheetID
@@ -15,6 +18,7 @@ function getSpreadsheetID(pageToken) {
 	if (pageToken === undefined) {
 		pageToken = "";
 	}
+	
   var request = gapi.client.drive.files.list({
       'pageSize': 10,
       //'fields': "nextPageToken, files(id, name)",
@@ -28,23 +32,18 @@ function getSpreadsheetID(pageToken) {
 		  if (files && files.length > 0) {
 		    for (var i = 0; i < files.length; i++) {
 		      var file = files[i];
-		      spreadsheetSearchCollection.push(file);
-		      /*var $item = $("<button>").text(file.name).addClass("list-group-item spreadSheetIDBtn").val(file.id);
-		      if (file.id == SPREADSHEET_ID) {
-		      	$item.addClass("active");
-		      }
-		      $("#fileSelector").append($item);*/
+		      myDrive.spreadsheetSearchCollection.push(file);
 		      spreadsheetSearchPopulateItem(file);
 		    }
 		    
-		    var totalPages = spreadsheetSearchCollection.length / 10;
-		    if ((spreadsheetSearchCollection.length % 10) > 0 ) {
+		    var totalPages = myDrive.spreadsheetSearchCollection.length / 10;
+		    if ((myDrive.spreadsheetSearchCollection.length % 10) > 0 ) {
 		    	totalPages++;
 		    }
 		    
-		    spreadsheetSearchTotalPages = totalPages;
+		    myDrive.spreadsheetSearchTotalPages = totalPages;
 		    
-		    spreadsheetSearchNextPageToken = (resp.result.nextPageToken != undefined) ? resp.result.nextPageToken : "";
+		    myDrive.spreadsheetSearchNextPageToken = (resp.result.nextPageToken != undefined) ? resp.result.nextPageToken : "";
 		    
 		    if (resp.result.nextPageToken != undefined) {
 		    	$("#spreadsheetSelectNextPage").prop("disabled", false);
@@ -86,10 +85,10 @@ function spreadsheetSearchPopulateItem(file) {
  * Resets all variables when making a new search.
  */
 function clearSpreadsheetCollection() {
-	spreadsheetSearchCollection = [];
-	spreadsheetSearchNextPageToken = "";
-	spreadsheetSearchCurrentPage = 0;
-	spreadsheetSearchTotalPages = 0;
+	myDrive.spreadsheetSearchCollection = [];
+	myDrive.spreadsheetSearchNextPageToken = "";
+	myDrive.spreadsheetSearchCurrentPage = 0;
+	myDrive.spreadsheetSearchTotalPages = 0;
 	getSpreadsheetID();
 }
 
@@ -103,23 +102,23 @@ function clearSpreadsheetCollection() {
  */
 function handleSpreadsheetSearchPages(action) {
 	
-	if (action == "next" ) {//&& spreadsheetSearchCurrentPage + 1 <= spreadsheetSearchTotalPages) {
-		spreadsheetSearchCurrentPage++;
+	if (action == "next" ) {//&& myDrive.spreadsheetSearchCurrentPage + 1 <= myDrive.spreadsheetSearchTotalPages) {
+		myDrive.spreadsheetSearchCurrentPage++;
 	} else if (action == "previous") {
-		spreadsheetSearchCurrentPage--;
+		myDrive.spreadsheetSearchCurrentPage--;
 	}
 
-	var startIndex = spreadsheetSearchCurrentPage * 10;
-	var endIndex = ((startIndex+10) > spreadsheetSearchCollection.length) ? spreadsheetSearchCollection.length : startIndex+10;
+	var startIndex = myDrive.spreadsheetSearchCurrentPage * 10;
+	var endIndex = ((startIndex+10) > myDrive.spreadsheetSearchCollection.length) ? myDrive.spreadsheetSearchCollection.length : startIndex+10;
 	
 
-	if (spreadsheetSearchNextPageToken == "" && spreadsheetSearchCurrentPage + 1 > spreadsheetSearchTotalPages-1) {
+	if (myDrive.spreadsheetSearchNextPageToken == "" && myDrive.spreadsheetSearchCurrentPage + 1 > myDrive.spreadsheetSearchTotalPages-1) {
 		$("#spreadsheetSelectNextPage").prop("disabled", true);
 	} else {
 		$("#spreadsheetSelectNextPage").prop("disabled", false);
 	}
 
-	if (spreadsheetSearchCurrentPage - 1 < 0) {
+	if (myDrive.spreadsheetSearchCurrentPage - 1 < 0) {
 		$("#spreadsheetSelectPrevPage").prop("disabled", true);
 	} else {
 		$("#spreadsheetSelectPrevPage").prop("disabled", false);
@@ -127,11 +126,11 @@ function handleSpreadsheetSearchPages(action) {
 
 	$("#fileSelector").empty();
 	for (var i = startIndex; i < endIndex; i++) {
-		spreadsheetSearchPopulateItem(spreadsheetSearchCollection[i]);
+		spreadsheetSearchPopulateItem(myDrive.spreadsheetSearchCollection[i]);
 	}
 	
-	if (spreadsheetSearchNextPageToken != "" && startIndex >= spreadsheetSearchCollection.length) {
-		getSpreadsheetID(spreadsheetSearchNextPageToken);
+	if (myDrive.spreadsheetSearchNextPageToken != "" && startIndex >= myDrive.spreadsheetSearchCollection.length) {
+		getSpreadsheetID(myDrive.spreadsheetSearchNextPageToken);
 		$("#spreadsheetSelectPrevPage").prop("disabled", false);
 		return;
 	}
