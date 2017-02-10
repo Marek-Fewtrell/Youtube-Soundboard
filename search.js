@@ -15,6 +15,7 @@ var mySearch = {
 	
 	maxResultsDisplay: 5, //Number of results to display per page.
 	searchNextPageToken: "", //search next page token
+	searchPreviousPageToken: "",
 	searchCurrentPage: 0, //Search current page of current search query
 	searchTotalPages: 0, //Total number of pages for current search query
 	
@@ -81,16 +82,16 @@ function search(pageToken) {
 		$("#search-container").empty();
 		
 		var results = response.result;
-		nextSearchPageToken = (results.nextPageToken !== undefined) ? results.nextPageToken : "";
-		previousSearchPageToken = (results.prevPageToken !== undefined) ? results.prevPageToken : "";
+		mySearch.searchNextPageToken = (results.nextPageToken !== undefined) ? results.nextPageToken : "";
+		mySearch.searchPreviousPageToken = (results.prevPageToken !== undefined) ? results.prevPageToken : "";
 		
-		if (nextSearchPageToken == "") {
+		if (mySearch.searchNextPageToken == "") {
 			$("#nextSearchPageBtn").prop("disabled", true);
 		} else {
 			$("#nextSearchPageBtn").prop("disabled", false);
 		}
 		
-		if (previousSearchPageToken == "") {
+		if (mySearch.searchPreviousPageToken == "") {
 			$("#previosSearchPageBtn").prop("disabled", true);
 		} else {
 			$("#previosSearchPageBtn").prop("disabled", false);
