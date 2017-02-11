@@ -10,16 +10,10 @@
 	<body>
 		<div class="container-fluid text-center">
 			<div>
-				<h2>Youtube Soundboard <button id="appSettings" class="btn btn-default glyphicon glyphicon-cog" disabled=true title="Show Application Settings" data-toggle="modal" data-target="#myModal2"></button></h2>
+				<h2>Youtube Soundboard <button id="appSettings" class="btn btn-default glyphicon glyphicon-cog" title="Show Application Settings" data-toggle="modal" data-target="#myModal2"></button></h2>
 			</div>
 			
-			<div id="authorize-div" style="display: none">
-		    <span>Authorize access to Google Account</span>
-		    <!--Button for the user to click to initiate auth sequence -->
-		    <button id="authorize-button" onclick="handleAuthClick(event)">
-		      Authorize
-		    </button>
-		  </div>
+			
 		  
 		  <span id="statusMessages"></span>
 			
@@ -61,7 +55,7 @@
 							<div id="search-container" class="text-left"></div><br />
 							
 							<button class="btn btn-default" id="previosSearchPageBtn" type="button" disabled=true name="name" value="" onclick="handleSearchPages('previous')">Previous Page</button>
-							<button class="btn btn-default" id="nextSearchPageBtn" type="button" name="name" value="" onclick="handleSearchPages('next')">Next Page</button>
+							<button class="btn btn-default" id="nextSearchPageBtn" type="button" disabled=true name="name" value="" onclick="handleSearchPages('next')">Next Page</button>
 						</div>
 					</div>
 				</div>
@@ -140,11 +134,18 @@
 							
 						</div>
 						<div class="modal-body">
-							<div class="well well-sm" >
+							<div id="authorize-div" style="display: none" class="well well-sm">
+								<span>Authorize access to Google Account</span>
+								<!--Button for the user to click to initiate auth sequence -->
+								<button id="authorize-button" onclick="handleAuthClick(event)">
+									Authorize
+								</button>
+							</div>
+							<div class="well well-sm unauthorisedDisabledLook" >
 								<p>
 									This application uses Google Spreadsheet to store data.
 									Click the button to create a new spreadsheet to store the data. <br />
-									<button id="createSpreadsheetBtn" class="btn btn-default" onclick="createSheet()">Create Spreadsheet</button>
+									<button id="createSpreadsheetBtn" disabled=true class="btn btn-default" onclick="createSheet()">Create Spreadsheet</button>
 									
 									<div class="bg-danger hidden" id="retrievespreadsheetIdErrorCreate">
 										Error:
@@ -154,8 +155,8 @@
 									
 								</p>
 							</div>
-							<div class="well well-sm">
-								<h4>Existing Files<button type="button" id="refreshSpreadsheetListBtn" value="" onclick="clearSpreadsheetCollection()" class="btn btn-default glyphicon glyphicon-refresh" ></button></h4>
+							<div class="well well-sm unauthorisedDisabledLook">
+								<h4>Existing Files<button type="button" id="refreshSpreadsheetListBtn" disabled=true value="" onclick="clearSpreadsheetCollection()" class="btn btn-default glyphicon glyphicon-refresh" ></button></h4>
 								
 								Select a pre-existing spreadsheet file to load it.<br />
 
@@ -167,7 +168,7 @@
 								
 								<div id="fileSelector" class="list-group">
 								</div>
-								<button id="spreadsheetSelectNextPage" class="btn btn-default" value="" onclick="handleSpreadsheetSearchPages('next')">Next</button>
+								<button id="spreadsheetSelectNextPage" class="btn btn-default" disabled=true value="" onclick="handleSpreadsheetSearchPages('next')">Next</button>
 								<button id="spreadsheetSelectPrevPage" class="btn btn-default" disabled=true value="" onclick="handleSpreadsheetSearchPages('previous')">Previous</button>							
 							</div>
 						</div>

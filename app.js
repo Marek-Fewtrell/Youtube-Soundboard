@@ -59,7 +59,7 @@ $(document).ready(function() {
 	
 	//Youtube Search add video button action
 	$("#search-container").on("click", ".btnAddSearch", function () {
-		var searchItem = searchCollection[$(this).val()];
+		var searchItem = mySearch.searchCollection[$(this).val()];
 		changeModalAction("create");
 		addVideoSearchAction(searchItem.videoTitle, searchItem.videoId);
 	});

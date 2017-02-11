@@ -34,3 +34,7 @@ body {
 table th {
 	text-align: center;
 }
+
+.unauthorisedDisabledLook {
+	opacity: 0.4;
+}
