@@ -38,3 +38,15 @@ table th {
 .unauthorisedDisabledLook {
 	opacity: 0.4;
 }
+
+.myIconBar {
+	background-color: orange;
+}
+
+.affix {
+	z-index: 1;
+	bottom:0;
+	width: 100%;
+}
+
+
