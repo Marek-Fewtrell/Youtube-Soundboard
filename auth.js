@@ -27,11 +27,16 @@ function handleAuthResult(authResult) {
     // Hide auth UI
     authorizeDiv.css("display", 'none');
     $("#appSettings").attr("disabled", false);
+    $("#createSpreadsheetBtn").attr("disabled", false);
+    $("#refreshSpreadsheetListBtn").attr("disabled", false);
+    
+    $(".unauthorisedDisabledLook").removeClass("unauthorisedDisabledLook");
     getSpreadsheetID();
   } else {
     // Show auth UI, allowing the user to initiate authorization by
     // clicking authorize button.
-    authorizeDiv.css("display", 'inline');
+    authorizeDiv.css("display", 'block');
+    $("#myModal2").modal("show");
   }
 }
 

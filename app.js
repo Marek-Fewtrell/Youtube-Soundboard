@@ -6,12 +6,13 @@
 //Youtube Player object.
 var player;
 
-//Youtube search page tokens.
-var nextSearchPageToken = "";
-var previousSearchPageToken = "";
+var myApp = {
 
-//Loop button state
-var loopVideoBool = false;
+	//Loop button state
+	loopVideoBool: false
+
+};
+
 
 $(document).ready(function() {
 	//Loads the youtube player.
@@ -34,7 +35,7 @@ $(document).ready(function() {
 	//Saved Video edit button action.
 	$("#saveListTable").on("click", ".btnEdit", function() {
 		var index = getSingleVideoIndex($(this).val());
-		var videoItem = savedVideosCollection[index];
+		var videoItem = mySheet.savedVideosCollection[index];
 		changeModalAction("edit");
 		populateModal(videoItem.name, videoItem.url);
 		$("#videoRowNumberHolder").val(videoItem.rowNumber);
@@ -58,7 +59,7 @@ $(document).ready(function() {
 	
 	//Youtube Search add video button action
 	$("#search-container").on("click", ".btnAddSearch", function () {
-		var searchItem = searchCollection[$(this).val()];
+		var searchItem = mySearch.searchCollection[$(this).val()];
 		changeModalAction("create");
 		addVideoSearchAction(searchItem.videoTitle, searchItem.videoId);
 	});
@@ -88,12 +89,30 @@ $(document).ready(function() {
 	
 	//Youtube Player loop button toggle action
 	$("#loopVideoBtn").on("click", function (event) {
-		if (loopVideoBool) {
-			loopVideoBool = false;
+		if (myApp.loopVideoBool) {
+			myApp.loopVideoBool = false;
 		} else {
-			loopVideoBool = true;
+			myApp.loopVideoBool = true;
 		}
 	});
+	
+	$("#videoPlayerCollapse").on('show.bs.collapse', function(){
+		$("#vPCollapseIcon").removeClass("glyphicon-chevron-left");
+		$("#vPCollapseIcon").addClass("glyphicon-chevron-down");
+  });
+  $("#videoPlayerCollapse").on('hide.bs.collapse', function(){
+  	$("#vPCollapseIcon").removeClass("glyphicon-chevron-down");
+  	$("#vPCollapseIcon").addClass("glyphicon-chevron-left");
+  });
+  
+  $("#searchCollapse").on('show.bs.collapse', function(){
+		$("#sCollapseIcon").removeClass("glyphicon-chevron-left");
+		$("#sCollapseIcon").addClass("glyphicon-chevron-down");
+  });
+  $("#searchCollapse").on('hide.bs.collapse', function(){
+  	$("#sCollapseIcon").removeClass("glyphicon-chevron-down");
+  	$("#sCollapseIcon").addClass("glyphicon-chevron-left");
+  });
 	
 	//Enables the Enter Key to be used in the search bar to trigger the search functionality.
 	$("#query").keypress(function (e) {
@@ -159,7 +178,13 @@ function addToTable(name, url, rownumber) {
 	
 	var videoName = name;
 	var videoURL = url;
-	var videoID = videoURL.match(/v=([^&]+)/)[1];
+	var videoID;
+	if (validateUrl(videoURL)) {
+		videoID = videoURL.match(/v=([^&]+)/)[1];
+	} else {
+		videoID = null;
+	}
+	
 
 	var $editBtn = $("<button/>").addClass("btn btn-default btnEdit glyphicon glyphicon-pencil").attr("value", rownumber);
 	var $cueVideoBtn = $("<button/>").addClass("btn btn-default btnCue glyphicon glyphicon-play-circle").attr("value", videoID);
@@ -167,6 +192,11 @@ function addToTable(name, url, rownumber) {
 	
 	var $nameCol = $("<td/>").append(videoName);
 	var $link = $("<a>").attr("href", url).attr("target", "_blank").addClass("btn btn-default glyphicon glyphicon-link");
+	
+	if (videoID === null) {
+		$link.attr("disabled", "true").attr("href", null);
+		$cueVideoBtn.attr("disabled", "true");
+	}
 	
 	var $btnGroup = $("<span>").addClass("btn-group").append($cueVideoBtn, $link, $editBtn, $removeBtn);
 	
@@ -180,7 +210,7 @@ function addToTable(name, url, rownumber) {
  */
 function populateTable() {
 	$("#saveListTable tr:gt(0)").remove();
-	$.each(savedVideosCollection, function(index, item) {
+	$.each(mySheet.savedVideosCollection, function(index, item) {
 		addToTable(item["name"], item["url"], item["rowNumber"]);
 	});
 }
@@ -277,8 +307,8 @@ function validateUrl(url) {
  */
 function addSingleVideo(name, url, rownumber) {
 	var newVideoItem = {"name": name, "url" : url, "rowNumber": rownumber};
-	var previousLength = savedVideosCollection.length;
-	var newLength = savedVideosCollection.push(newVideoItem);
+	var previousLength = mySheet.savedVideosCollection.length;
+	var newLength = mySheet.savedVideosCollection.push(newVideoItem);
 	if (newLength > previousLength) {
 		return true;
 	} else {
@@ -294,15 +324,15 @@ function addSingleVideo(name, url, rownumber) {
  * rownumber - The number of the row it is in.
  */
 function getSingleVideoIndex(rownumber) {
-	/*$.each(savedVideosCollection, function(index, item) {
+	/*$.each(mySheet.savedVideosCollection, function(index, item) {
 		if (item.rowNumber == rownumber) {
 			
 		}
 	});*/
 	var videoIndex = -1;
-	for ( var i = 0; i < savedVideosCollection.length; i++) {
-		if (savedVideosCollection[i].rowNumber == rownumber) {
-			//videoObject = savedVideosCollection[i];
+	for ( var i = 0; i < mySheet.savedVideosCollection.length; i++) {
+		if (mySheet.savedVideosCollection[i].rowNumber == rownumber) {
+			//videoObject = mySheet.savedVideosCollection[i];
 			videoIndex = i;
 			break;
 		}
@@ -324,7 +354,7 @@ function updateSingleVideo(rownumber, name, url) {
 	if (index == -1) {
 		return false;
 	}
-	var videoObject = savedVideosCollection[index];
+	var videoObject = mySheet.savedVideosCollection[index];
 	videoObject.name = name;
 	videoObject.url = url;
 	return true;
@@ -344,7 +374,7 @@ function removeSingleVideo(rownumber) {
 		return false;
 	}
 	// splice()
-	savedVideosCollection.splice(index, 1);
+	mySheet.savedVideosCollection.splice(index, 1);
 }
 
 /*
@@ -432,7 +462,7 @@ function onYouTubeIframeAPIReady() {
 */
 function onPlayerStateChange(event) {
 	//This starts playing a video after pressing the stop button.
-  if (loopVideoBool == true && event.data == YT.PlayerState.ENDED) {
+  if (myApp.loopVideoBool == true && event.data == YT.PlayerState.ENDED) {
   	playVideo();
   }
 }

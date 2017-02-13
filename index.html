@@ -10,38 +10,50 @@
 	<body>
 		<div class="container-fluid text-center">
 			<div>
-				<h2>Youtube Soundboard <button id="appSettings" class="btn btn-default glyphicon glyphicon-cog" disabled=true title="Show Application Settings" data-toggle="modal" data-target="#myModal2"></button></h2>
+				<h2>Youtube Soundboard <button id="appSettings" class="btn btn-default glyphicon glyphicon-cog" title="Show Application Settings" data-toggle="modal" data-target="#myModal2"></button></h2>
 			</div>
-			
-			<div id="authorize-div" style="display: none">
-		    <span>Authorize access to Google Account</span>
-		    <!--Button for the user to click to initiate auth sequence -->
-		    <button id="authorize-button" onclick="handleAuthClick(event)">
-		      Authorize
-		    </button>
-		  </div>
 		  
 		  <span id="statusMessages"></span>
 			
 			<div class="row">
 				<div class="col-md-6">
 					<div class="well well-sm">
-						<div class="videoWrapper">
-							<div id="player"></div>
+						<a href="#videoPlayerCollapse" data-toggle="collapse">
+							<div>
+								<h4>
+									<i class="glyphicon glyphicon-film text-left"></i> Player <i id="vPCollapseIcon" class="glyphicon glyphicon-chevron-down"></i>
+								</h4>
+							</div>
+						</a>
+						<div id="videoPlayerCollapse" class="collapse in">
+							<div class="videoWrapper">
+								<div id="player"></div>
+							</div>
+							<br />
 						</div>
-						<br />
-						<div class="btn-group">
-							<button class="btn btn-default glyphicon glyphicon-play" name="playVideoBtn" value="Play" onclick="playVideo()"></button>
-							<button class="btn btn-default glyphicon glyphicon-pause" name="pauseVideoBtn" value="Pause" onclick="pauseVideo()"></button>
-							<button class="btn btn-default glyphicon glyphicon-stop" name="stopVideoBtn" value="Stop" onclick="stopVideo()"></button>
-							<button class="btn btn-default glyphicon glyphicon-repeat" id="loopVideoBtn" value="Loop" onclick="" data-toggle="button"></button>
-							
+						<div data-spy="affix" data-offset-top="200">
+							<div class="btn-group">
+								<button class="btn btn-default glyphicon glyphicon-play" name="playVideoBtn" value="Play" onclick="playVideo()"></button>
+								<button class="btn btn-default glyphicon glyphicon-pause" name="pauseVideoBtn" value="Pause" onclick="pauseVideo()"></button>
+								<button class="btn btn-default glyphicon glyphicon-stop" name="stopVideoBtn" value="Stop" onclick="stopVideo()"></button>
+								<button class="btn btn-default glyphicon glyphicon-repeat" id="loopVideoBtn" value="Loop" onclick="" data-toggle="button"></button>
+							</div>
 						</div>
 					</div>
 				
 					<div class="well well-sm">
-						<div>
-							<h3>Search</h3>
+						<a href="#searchCollapse" data-toggle="collapse">
+							<div>
+								<h4>
+									<i class="glyphicon glyphicon-search"></i>
+									Search
+									<i id="sCollapseIcon"class="glyphicon glyphicon-chevron-down"></i>
+								</h4>
+							</div>
+						</a>
+						
+						<div id="searchCollapse" class="collapse in">
+							
 							<div class="input-group">
 								<div class="bg-danger hidden" id="searchError">
 									Error:
@@ -51,7 +63,7 @@
 						
 								<input type="text" class="form-control" placeholder="search" id="query" />
 								<div class="input-group-btn">
-									<button id="btnQuery" type="button" class="btn btn-default btn-primary" onclick="search()">
+									<button id="btnQuery" type="button" class="btn btn-default btn-primary" onclick="newSearch()">
 										<span class="glyphicon glyphicon-search"></span>
 									</button>
 								</div>
@@ -61,7 +73,7 @@
 							<div id="search-container" class="text-left"></div><br />
 							
 							<button class="btn btn-default" id="previosSearchPageBtn" type="button" disabled=true name="name" value="" onclick="handleSearchPages('previous')">Previous Page</button>
-							<button class="btn btn-default" id="nextSearchPageBtn" type="button" name="name" value="" onclick="handleSearchPages('next')">Next Page</button>
+							<button class="btn btn-default" id="nextSearchPageBtn" type="button" disabled=true name="name" value="" onclick="handleSearchPages('next')">Next Page</button>
 						</div>
 					</div>
 				</div>
@@ -74,7 +86,7 @@
 								Saved Videos
 								<button id="refreshSavedVideosBtn" disabled="true" onclick="refreshSavedVideoTable()" title="Refresh Videos" class="btn btn-default glyphicon glyphicon-refresh" ></button>
 							</h3>
-						</div>	
+						</div>
 						<div id="visualFeedback"></div>
 						<span class="label label-info" id="savedVideosInfo"></span>
 						<div class="bg-danger hidden" id="savedVideosError">
@@ -82,7 +94,7 @@
 							<span id="savedVideosErrorMessage"></span>
 							<a class="bg-info" data-toggle="modal" href="#errorDetailsModal">Error Details</a>
 						</div>
-						<div class="table-responsive clearfix">
+						<div class="clearfix">
 							<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="table table-striped table-bordered table-condensed">
 								<tr>
 									<th>Video Name</th>
@@ -140,11 +152,18 @@
 							
 						</div>
 						<div class="modal-body">
-							<div class="well well-sm" >
+							<div id="authorize-div" style="display: none" class="well well-sm">
+								<span>Authorize access to Google Account</span>
+								<!--Button for the user to click to initiate auth sequence -->
+								<button id="authorize-button" onclick="handleAuthClick(event)">
+									Authorize
+								</button>
+							</div>
+							<div class="well well-sm unauthorisedDisabledLook" >
 								<p>
 									This application uses Google Spreadsheet to store data.
 									Click the button to create a new spreadsheet to store the data. <br />
-									<button id="createSpreadsheetBtn" class="btn btn-default" onclick="createSheet()">Create Spreadsheet</button>
+									<button id="createSpreadsheetBtn" disabled=true class="btn btn-default" onclick="createSheet()">Create Spreadsheet</button>
 									
 									<div class="bg-danger hidden" id="retrievespreadsheetIdErrorCreate">
 										Error:
@@ -154,8 +173,8 @@
 									
 								</p>
 							</div>
-							<div class="well well-sm">
-								<h4>Existing Files<button type="button" id="refreshSpreadsheetListBtn" value="" onclick="clearSpreadsheetCollection()" class="btn btn-default glyphicon glyphicon-refresh" ></button></h4>
+							<div class="well well-sm unauthorisedDisabledLook">
+								<h4>Existing Files<button type="button" id="refreshSpreadsheetListBtn" disabled=true value="" onclick="clearSpreadsheetCollection()" class="btn btn-default glyphicon glyphicon-refresh" ></button></h4>
 								
 								Select a pre-existing spreadsheet file to load it.<br />
 
@@ -167,7 +186,7 @@
 								
 								<div id="fileSelector" class="list-group">
 								</div>
-								<button id="spreadsheetSelectNextPage" class="btn btn-default" value="" onclick="handleSpreadsheetSearchPages('next')">Next</button>
+								<button id="spreadsheetSelectNextPage" class="btn btn-default" disabled=true value="" onclick="handleSpreadsheetSearchPages('next')">Next</button>
 								<button id="spreadsheetSelectPrevPage" class="btn btn-default" disabled=true value="" onclick="handleSpreadsheetSearchPages('previous')">Previous</button>							
 							</div>
 						</div>

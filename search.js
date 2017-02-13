@@ -1,10 +1,64 @@
 
 
-var maxResultsDisplay = 5; //Number of results to display per page.
-var searchCollection = []; //collection of search pages for current search query.
-var searchNextPageToken = ""; //search next page token
-var searchCurrentPage = 0; //Search current page of current search query
-var searchTotalPages = 0; //Total number of pages for current search query
+var mySearch = {
+	searchCollection: [], //collection of search pages for current search query.
+	
+	addItem: function(item) {
+		this.searchCollection.push(item);
+	},
+	collectionLength: function() {
+		return this.searchCollection.length;
+	},
+	clearCollection: function() {
+		this.searchCollection = [];
+	},
+	
+	maxResultsDisplay: 5, //Number of results to display per page.
+	searchNextPageToken: "", //search next page token
+	searchPreviousPageToken: "",
+	searchCurrentPage: 0, //Search current page of current search query
+	searchTotalPages: 0, //Total number of pages for current search query
+	
+	searchQuery: "",
+	getQuery: function() {
+		return this.searchQuery;
+	},
+	setQuery: function(query) {
+		this.searchQuery = query;
+	},
+	
+};
+
+var SearchItem = function( index, videoId, title, channelId, channelTitle, thumbnailUrl, thumbnailsHeight, thumbnailsWidth) {
+	this.id = index;
+	this.videoId = videoId;
+	this.videoTitle = title;
+	this.channelId = channelId;
+	this.channelTitle = channelTitle;
+	this.thumbnail = {};
+	this.thumbnail.thumbnailUrl = thumbnailUrl;
+	this.thumbnail.thumbnailHeight = thumbnailsHeight;
+	this.thumbnail.thumbnailWidth = thumbnailsWidth;
+};
+
+
+//var maxResultsDisplay = 5; //Number of results to display per page.
+//var searchCollection = []; //collection of search pages for current search query.
+//var searchNextPageToken = ""; //search next page token
+//var searchCurrentPage = 0; //Search current page of current search query
+//var searchTotalPages = 0; //Total number of pages for current search query
+
+
+function newSearch() {
+	var q = $("#query").val();
+	if (q != mySearch.getQuery()) {
+		mySearch.setQuery(q);
+		mySearch.clearCollection();
+	} else {
+		//go to first page of current results.
+	}
+	search();
+}
 
 /*
  * Function: search
@@ -18,28 +72,26 @@ function search(pageToken) {
 		pageToken = "";
 	}
 	
-	var q = $("#query").val();
 	var request = gapi.client.youtube.search.list({
-		q: q,
+		q: mySearch.getQuery(),
 		part: 'snippet',
 		type: 'video',
 		pageToken: pageToken //Forgot to add this variable.
 	}).then(function(response) {
 		$("#searchError").hide();
 		$("#search-container").empty();
-		//searchCollection = [];
 		
 		var results = response.result;
-		nextSearchPageToken = (results.nextPageToken !== undefined) ? results.nextPageToken : "";
-		previousSearchPageToken = (results.prevPageToken !== undefined) ? results.prevPageToken : "";
+		mySearch.searchNextPageToken = (results.nextPageToken !== undefined) ? results.nextPageToken : "";
+		mySearch.searchPreviousPageToken = (results.prevPageToken !== undefined) ? results.prevPageToken : "";
 		
-		if (nextSearchPageToken == "") {
+		if (mySearch.searchNextPageToken == "") {
 			$("#nextSearchPageBtn").prop("disabled", true);
 		} else {
 			$("#nextSearchPageBtn").prop("disabled", false);
 		}
 		
-		if (previousSearchPageToken == "") {
+		if (mySearch.searchPreviousPageToken == "") {
 			$("#previosSearchPageBtn").prop("disabled", true);
 		} else {
 			$("#previosSearchPageBtn").prop("disabled", false);
@@ -47,31 +99,20 @@ function search(pageToken) {
 		
 		$.each(results.items, function(index, item) {
 			
-			var searchItem = {
-				"id" : index,
-				"videoId" : item.id.videoId,
-				"videoTitle" : item.snippet.title,
-				"channelId" : item.snippet.channelId,
-				"channelTitle" : item.snippet.channelTitle,
-				"thumbnail" : {
-					"thumbnailUrl" : item.snippet.thumbnails.default.url,
-					"thumbnailHeight" : item.snippet.thumbnails.default.height,
-					"thumbnailWidth" : item.snippet.thumbnails.default.width
-				}
-			};
+			var newSearchItem = new SearchItem(index, item.id.videoId, item.snippet.title, item.snippet.channelId, item.snippet.channelTitle, item.snippet.thumbnails.default.url, item.snippet.thumbnails.default.height, item.snippet.thumbnails.default.width);
 			
-			searchCollection.push(searchItem);
-			searchPopulateItem(searchItem);
+			mySearch.addItem(newSearchItem);
+			searchPopulateItem(newSearchItem);
 		});
 		
-		var totalPages = searchCollection.length / maxResultsDisplay;
-    if ((searchCollection.length % maxResultsDisplay) > 0 ) {
+		var totalPages = mySearch.collectionLength() / mySearch.maxResultsDisplay;
+    if ((mySearch.collectionLength() % mySearch.maxResultsDisplay) > 0 ) {
     	totalPages++;
     }
     
-    searchTotalPages = totalPages;
+    mySearch.searchTotalPages = totalPages;
     
-    searchNextPageToken = (response.result.nextPageToken != undefined) ? response.result.nextPageToken : "";
+    mySearch.searchNextPageToken = (response.result.nextPageToken != undefined) ? response.result.nextPageToken : "";
     
     if (response.result.nextPageToken != undefined) {
     	$("#nextSearchPageBtn").prop("disabled", false);
@@ -127,22 +168,22 @@ function searchPopulateItem(item) {
 function handleSearchPages(action) {
 	
 	if (action == "next" ) {
-		searchCurrentPage++;
+		mySearch.searchCurrentPage++;
 	} else if (action == "previous") {
-		searchCurrentPage--;
+		mySearch.searchCurrentPage--;
 	}
 
-	var startIndex = searchCurrentPage * maxResultsDisplay;
-	var endIndex = ((startIndex+maxResultsDisplay) > searchCollection.length) ? searchCollection.length : startIndex+maxResultsDisplay;
+	var startIndex = mySearch.searchCurrentPage * mySearch.maxResultsDisplay;
+	var endIndex = ((startIndex+mySearch.maxResultsDisplay) > mySearch.collectionLength()) ? mySearch.collectionLength() : startIndex+mySearch.maxResultsDisplay;
 	
 
-	if (searchNextPageToken == "" && searchCurrentPage + 1 > searchTotalPages-1) {
+	if (mySearch.searchNextPageToken == "" && mySearch.searchCurrentPage + 1 > mySearch.searchTotalPages-1) {
 		$("#nextSearchPageBtn").prop("disabled", true);
 	} else {
 		$("#nextSearchPageBtn").prop("disabled", false);
 	}
 
-	if (searchCurrentPage - 1 < 0) {
+	if (mySearch.searchCurrentPage - 1 < 0) {
 		$("#previosSearchPageBtn").prop("disabled", true);
 	} else {
 		$("#previosSearchPageBtn").prop("disabled", false);
@@ -150,11 +191,11 @@ function handleSearchPages(action) {
 
 	$("#search-container").empty();
 	for (var i = startIndex; i < endIndex; i++) {
-		searchPopulateItem(searchCollection[i]);
+		searchPopulateItem(mySearch.searchCollection[i]);
 	}
 	
-	if (searchNextPageToken != "" && startIndex >= searchCollection.length) {
-		search(searchNextPageToken);
+	if (mySearch.searchNextPageToken != "" && startIndex >= mySearch.collectionLength()) {
+		search(mySearch.searchNextPageToken);
 		$("#previosSearchPageBtn").prop("disabled", false);
 		return;
 	}
