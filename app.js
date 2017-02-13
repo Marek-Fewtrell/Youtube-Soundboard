@@ -96,6 +96,24 @@ $(document).ready(function() {
 		}
 	});
 	
+	$("#videoPlayerCollapse").on('show.bs.collapse', function(){
+		$("#vPCollapseIcon").removeClass("glyphicon-chevron-left");
+		$("#vPCollapseIcon").addClass("glyphicon-chevron-down");
+  });
+  $("#videoPlayerCollapse").on('hide.bs.collapse', function(){
+  	$("#vPCollapseIcon").removeClass("glyphicon-chevron-down");
+  	$("#vPCollapseIcon").addClass("glyphicon-chevron-left");
+  });
+  
+  $("#searchCollapse").on('show.bs.collapse', function(){
+		$("#sCollapseIcon").removeClass("glyphicon-chevron-left");
+		$("#sCollapseIcon").addClass("glyphicon-chevron-down");
+  });
+  $("#searchCollapse").on('hide.bs.collapse', function(){
+  	$("#sCollapseIcon").removeClass("glyphicon-chevron-down");
+  	$("#sCollapseIcon").addClass("glyphicon-chevron-left");
+  });
+	
 	//Enables the Enter Key to be used in the search bar to trigger the search functionality.
 	$("#query").keypress(function (e) {
 		if (e.which == 13) {

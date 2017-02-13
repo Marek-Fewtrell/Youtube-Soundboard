@@ -17,28 +17,43 @@
 			
 			<div class="row">
 				<div class="col-md-6">
-				
 					<div class="well well-sm">
-						<a href="#videoPlayerCollapse" data-toggle="collapse">Collapse</a>
+						<a href="#videoPlayerCollapse" data-toggle="collapse">
+							<div>
+								<h4>
+									<i class="glyphicon glyphicon-film text-left"></i> Player <i id="vPCollapseIcon" class="glyphicon glyphicon-chevron-down"></i>
+								</h4>
+							</div>
+						</a>
 						<div id="videoPlayerCollapse" class="collapse in">
 							<div class="videoWrapper">
 								<div id="player"></div>
 							</div>
 							<br />
-							<div class="btn-group" data-spy="affix" data-offset-top="100">
+						</div>
+						<div data-spy="affix" data-offset-top="200">
+							<div class="btn-group">
 								<button class="btn btn-default glyphicon glyphicon-play" name="playVideoBtn" value="Play" onclick="playVideo()"></button>
 								<button class="btn btn-default glyphicon glyphicon-pause" name="pauseVideoBtn" value="Pause" onclick="pauseVideo()"></button>
 								<button class="btn btn-default glyphicon glyphicon-stop" name="stopVideoBtn" value="Stop" onclick="stopVideo()"></button>
 								<button class="btn btn-default glyphicon glyphicon-repeat" id="loopVideoBtn" value="Loop" onclick="" data-toggle="button"></button>
-							
 							</div>
 						</div>
 					</div>
 				
 					<div class="well well-sm">
-						<a href="#searchCollapse" data-toggle="collapse">Collapse</a>
+						<a href="#searchCollapse" data-toggle="collapse">
+							<div>
+								<h4>
+									<i class="glyphicon glyphicon-search"></i>
+									Search
+									<i id="sCollapseIcon"class="glyphicon glyphicon-chevron-down"></i>
+								</h4>
+							</div>
+						</a>
+						
 						<div id="searchCollapse" class="collapse in">
-							<h3>Search</h3>
+							
 							<div class="input-group">
 								<div class="bg-danger hidden" id="searchError">
 									Error:
@@ -70,30 +85,22 @@
 								<button id="newSavedVideoBtn" disabled="true" data-toggle="modal" data-target="#myModal" class="btn btn-default glyphicon glyphicon-plus"></button>
 								Saved Videos
 								<button id="refreshSavedVideosBtn" disabled="true" onclick="refreshSavedVideoTable()" title="Refresh Videos" class="btn btn-default glyphicon glyphicon-refresh" ></button>
-								<button type="button" data-toggle="collapse" data-target="#savedVideoCollapse" class="navbar-toggle btn btn-default">
-									<span class="icon-bar myIconBar"></span>
-									<span class="icon-bar myIconBar"></span>
-									<span class="icon-bar myIconBar"></span>
-
-								</button>
 							</h3>
 						</div>
-						<div id="savedVideoCollapse" class="collapse in">
-							<div id="visualFeedback"></div>
-							<span class="label label-info" id="savedVideosInfo"></span>
-							<div class="bg-danger hidden" id="savedVideosError">
-								Error:
-								<span id="savedVideosErrorMessage"></span>
-								<a class="bg-info" data-toggle="modal" href="#errorDetailsModal">Error Details</a>
-							</div>
-							<div class="table-responsive clearfix">
-								<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="table table-striped table-bordered table-condensed">
-									<tr>
-										<th>Video Name</th>
-										<th>Actions</th>
-									</tr>
-								</table>
-							</div>
+						<div id="visualFeedback"></div>
+						<span class="label label-info" id="savedVideosInfo"></span>
+						<div class="bg-danger hidden" id="savedVideosError">
+							Error:
+							<span id="savedVideosErrorMessage"></span>
+							<a class="bg-info" data-toggle="modal" href="#errorDetailsModal">Error Details</a>
+						</div>
+						<div class="clearfix">
+							<table id="saveListTable" border="1px solid black" cellspacing="0" cellpadding="0" class="table table-striped table-bordered table-condensed">
+								<tr>
+									<th>Video Name</th>
+									<th>Actions</th>
+								</tr>
+							</table>
 						</div>
 					</div>
 				</div>
