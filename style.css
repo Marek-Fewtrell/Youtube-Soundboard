@@ -34,3 +34,24 @@ body {
 table th {
 	text-align: center;
 }
+
+.unauthorisedDisabledLook {
+	opacity: 0.4;
+}
+
+.myIconBar {
+	background-color: orange;
+}
+
+.affix {
+	z-index: 1;
+	bottom:0;
+	width: 100%;
+	background-color: blue;
+	left: 0;
+	padding: 5px;
+}
+
+a[disabled=disabled] {
+	pointer-events:none;
+}

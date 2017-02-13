@@ -59,7 +59,7 @@ $(document).ready(function() {
 	
 	//Youtube Search add video button action
 	$("#search-container").on("click", ".btnAddSearch", function () {
-		var searchItem = searchCollection[$(this).val()];
+		var searchItem = mySearch.searchCollection[$(this).val()];
 		changeModalAction("create");
 		addVideoSearchAction(searchItem.videoTitle, searchItem.videoId);
 	});
@@ -95,6 +95,24 @@ $(document).ready(function() {
 			myApp.loopVideoBool = true;
 		}
 	});
+	
+	$("#videoPlayerCollapse").on('show.bs.collapse', function(){
+		$("#vPCollapseIcon").removeClass("glyphicon-chevron-left");
+		$("#vPCollapseIcon").addClass("glyphicon-chevron-down");
+  });
+  $("#videoPlayerCollapse").on('hide.bs.collapse', function(){
+  	$("#vPCollapseIcon").removeClass("glyphicon-chevron-down");
+  	$("#vPCollapseIcon").addClass("glyphicon-chevron-left");
+  });
+  
+  $("#searchCollapse").on('show.bs.collapse', function(){
+		$("#sCollapseIcon").removeClass("glyphicon-chevron-left");
+		$("#sCollapseIcon").addClass("glyphicon-chevron-down");
+  });
+  $("#searchCollapse").on('hide.bs.collapse', function(){
+  	$("#sCollapseIcon").removeClass("glyphicon-chevron-down");
+  	$("#sCollapseIcon").addClass("glyphicon-chevron-left");
+  });
 	
 	//Enables the Enter Key to be used in the search bar to trigger the search functionality.
 	$("#query").keypress(function (e) {
@@ -160,7 +178,13 @@ function addToTable(name, url, rownumber) {
 	
 	var videoName = name;
 	var videoURL = url;
-	var videoID = videoURL.match(/v=([^&]+)/)[1];
+	var videoID;
+	if (validateUrl(videoURL)) {
+		videoID = videoURL.match(/v=([^&]+)/)[1];
+	} else {
+		videoID = null;
+	}
+	
 
 	var $editBtn = $("<button/>").addClass("btn btn-default btnEdit glyphicon glyphicon-pencil").attr("value", rownumber);
 	var $cueVideoBtn = $("<button/>").addClass("btn btn-default btnCue glyphicon glyphicon-play-circle").attr("value", videoID);
@@ -168,6 +192,11 @@ function addToTable(name, url, rownumber) {
 	
 	var $nameCol = $("<td/>").append(videoName);
 	var $link = $("<a>").attr("href", url).attr("target", "_blank").addClass("btn btn-default glyphicon glyphicon-link");
+	
+	if (videoID === null) {
+		$link.attr("disabled", "true").attr("href", null);
+		$cueVideoBtn.attr("disabled", "true");
+	}
 	
 	var $btnGroup = $("<span>").addClass("btn-group").append($cueVideoBtn, $link, $editBtn, $removeBtn);
 	
