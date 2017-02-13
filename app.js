@@ -178,7 +178,13 @@ function addToTable(name, url, rownumber) {
 	
 	var videoName = name;
 	var videoURL = url;
-	var videoID = videoURL.match(/v=([^&]+)/)[1];
+	var videoID;
+	if (validateUrl(videoURL)) {
+		videoID = videoURL.match(/v=([^&]+)/)[1];
+	} else {
+		videoID = null;
+	}
+	
 
 	var $editBtn = $("<button/>").addClass("btn btn-default btnEdit glyphicon glyphicon-pencil").attr("value", rownumber);
 	var $cueVideoBtn = $("<button/>").addClass("btn btn-default btnCue glyphicon glyphicon-play-circle").attr("value", videoID);
@@ -186,6 +192,11 @@ function addToTable(name, url, rownumber) {
 	
 	var $nameCol = $("<td/>").append(videoName);
 	var $link = $("<a>").attr("href", url).attr("target", "_blank").addClass("btn btn-default glyphicon glyphicon-link");
+	
+	if (videoID === null) {
+		$link.attr("disabled", "true").attr("href", null);
+		$cueVideoBtn.attr("disabled", "true");
+	}
 	
 	var $btnGroup = $("<span>").addClass("btn-group").append($cueVideoBtn, $link, $editBtn, $removeBtn);
 	

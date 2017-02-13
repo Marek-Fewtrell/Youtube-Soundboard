@@ -52,4 +52,6 @@ table th {
 	padding: 5px;
 }
 
-
+a[disabled=disabled] {
+	pointer-events:none;
+}
